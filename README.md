@@ -30,7 +30,7 @@ You can explore the [Live REST API](https://petstore.swagger.io/?url=https://raw
 This is a high-level view of how the different microservice interact with each other. 
 
 <p align="center">
-  <img src="/resources/Architecture.jpg" height="400px" alt="High-level Architecture"/>
+  <img src="/resources/E-commerce high level architecture.jpg" height="400px" alt="High-level Architecture"/>
 </p>
 
 ---
