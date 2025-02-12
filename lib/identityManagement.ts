@@ -1,5 +1,6 @@
 import { Construct } from 'constructs';
-import { Role, ServicePrincipal, ManagedPolicy, CfnElement, RemovalPolicy } from 'aws-cdk-lib/aws-iam';
+import { CfnElement, RemovalPolicy } from 'aws-cdk-lib';
+import { Role, ServicePrincipal, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
 
 export class IdentityManagement extends Construct {
   public readonly AWSLambdaBasicExecutionRole: (id?: string) => Role;

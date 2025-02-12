@@ -1,4 +1,4 @@
-import * as apiGatewayIntegrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
+import * as apiGatewayIntegrations from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Role } from 'aws-cdk-lib/aws-iam';
@@ -8,7 +8,7 @@ import {
     HttpApi,
     HttpMethod,
     IHttpRouteAuthorizer,
-} from '@aws-cdk/aws-apigatewayv2-alpha';
+} from 'aws-cdk-lib/aws-apigatewayv2';
 import { Construct } from 'constructs';
 import { CfnElement, Duration } from 'aws-cdk-lib';
 import { Bucket, EventType } from 'aws-cdk-lib/aws-s3';
@@ -16,7 +16,7 @@ import { LambdaDestination } from 'aws-cdk-lib/aws-s3-notifications';
 import {
     HttpLambdaAuthorizer,
     HttpLambdaResponseType,
-} from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
+} from 'aws-cdk-lib/aws-apigatewayv2-authorizers';
 import { KeyValue } from './utils';
 
 interface MicroserviceProps {
@@ -28,11 +28,10 @@ interface MicroserviceProps {
     amazonDynamoDBFullAccess: Role;
     amazonDynamoDBFullAccessWithSSMFullAccess: Role;
     amazonS3FullAccess: Role;
+    // authorizer: IHttpRouteAuthorizer;
 }
 
 export class Microservice extends Construct {
-    private readonly apiVersion = 'v1';
-
     constructor(scope: Construct, id: string, props: MicroserviceProps) {
         super(scope, id);
 
@@ -45,111 +44,293 @@ export class Microservice extends Construct {
             amazonDynamoDBFullAccessWithSSMFullAccess,
             amazonS3FullAccess,
             productBucket,
+            // authorizer,
         } = props;
 
-        const authorizer = this.createAuthorizer(amazonCognitoPowerUser);
+        const apiVersion = 'v1';
 
-        this.addRoutes(httpApi, environment, authorizer, {
-            amazonCognitoPowerUser,
-            awsLambdaBasicExecutionRole,
-            amazonDynamoDBFullAccess,
-            amazonDynamoDBFullAccessWithSSMFullAccess,
-            amazonS3FullAccess,
-        });
-
-        this.setupS3EventNotifications(productBucket, amazonDynamoDBFullAccess);
-    }
-
-    private createFunction(
-        handler: string,
-        entry: string,
-        role: Role
-    ): NodejsFunction {
-        const nodejsFunction = new NodejsFunction(this, handler, {
-            runtime: Runtime.NODEJS_18_X,
-            handler,
-            role,
-            entry: join(__dirname, `/../src/${entry}/index.ts`),
-            bundling: {
-                externalModules: ['aws-sdk'],
-            },
-            environment: this.node.tryGetContext('environment'),
-        });
-
-        (nodejsFunction.node.defaultChild as CfnElement).overrideLogicalId(handler);
-        return nodejsFunction;
-    }
-
-    private createRoute(
-        handler: string,
-        entry: string,
-        routePath: string,
-        methods: HttpMethod[],
-        role: Role = this.node.tryGetContext('defaultRole'),
-        authorizer?: IHttpRouteAuthorizer
-    ): AddRoutesOptions {
-        const nodejsFunction = this.createFunction(handler, entry, role);
-
-        return {
-            integration: new apiGatewayIntegrations.HttpLambdaIntegration(handler, nodejsFunction),
-            path: `/${this.apiVersion}${routePath}`,
-            methods,
-            authorizer,
+        const createFunction = (
+            handler: string,
+            entry: string,
+            role: Role = awsLambdaBasicExecutionRole,
+            nodeModules?: string[],
+        ) => {
+            const nodejsFunction = new NodejsFunction(scope, handler, {
+                runtime: Runtime.NODEJS_16_X,
+                handler,
+                role,
+                entry: join(__dirname, `/../src/${entry}/index.ts`),
+                bundling: {
+                    // minify: true,
+                    // nodeModules: ["aws-lambda", "aws-sdk", "aws-cdk",],
+                    nodeModules,
+                    externalModules: [
+                        'aws-sdk', // Use the 'aws-sdk' available in the Lambda runtime
+                    ],
+                },
+                environment,
+            });
+            (nodejsFunction.node.defaultChild as CfnElement).overrideLogicalId(
+                handler,
+            );
+            return nodejsFunction;
         };
-    }
+        const createRoute = (
+            handler: string,
+            entry: string,
+            routePath: string,
+            methods: HttpMethod[],
+            role: Role = awsLambdaBasicExecutionRole,
+            authorizer?: IHttpRouteAuthorizer,
+            nodeModules?: string[],
+        ) => {
+            const nodejsFunction = createFunction(handler, entry, role, nodeModules);
 
-    private createAuthorizer(role: Role): HttpLambdaAuthorizer {
-        return new HttpLambdaAuthorizer('lambdaAuthorizer', this.createFunction('authorizer', 'authorizer', role), {
-            responseTypes: [HttpLambdaResponseType.SIMPLE],
-            authorizerName: 'lambdaAuthorizer',
-            identitySource: [],
-            resultsCacheTtl: Duration.seconds(0),
+            const routesOptions: AddRoutesOptions = {
+                integration: new apiGatewayIntegrations.HttpLambdaIntegration(
+                    handler,
+                    nodejsFunction,
+                ),
+                path: `/${apiVersion}${routePath}`,
+                methods,
+                authorizer,
+            };
+
+            return routesOptions;
+        };
+
+        // 👇 create the lambda authorizer
+        const authorizer = new HttpLambdaAuthorizer(
+            'lambdaAuthorizer',
+            createFunction('authorizer', 'authorizer', amazonCognitoPowerUser),
+            {
+                responseTypes: [HttpLambdaResponseType.SIMPLE], // Define if returns simple and/or iam response
+                authorizerName: 'lambdaAuthorizer',
+                identitySource: [],
+                resultsCacheTtl: Duration.seconds(0),
+            },
+        );
+        // 👇 create all lambdas that sits behind the authorizer and set the authorizer on the Route
+        httpApi.addRoutes(
+            createRoute(
+                'register',
+                'register',
+                '/register',
+                [HttpMethod.POST],
+                amazonCognitoPowerUser,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'login',
+                'login',
+                '/login',
+                [HttpMethod.POST],
+                amazonCognitoPowerUser,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'logout',
+                'logout',
+                '/logout',
+                [HttpMethod.POST],
+                amazonCognitoPowerUser,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'refresh',
+                'refresh',
+                '/refresh',
+                [HttpMethod.POST],
+                amazonCognitoPowerUser,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'verify',
+                'verify',
+                '/verify',
+                [HttpMethod.POST],
+                undefined,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'userGroup',
+                'userGroup',
+                '/user-group/{groupname}',
+                [HttpMethod.POST, HttpMethod.DELETE],
+                amazonCognitoPowerUser,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'paymentHook',
+                'payment/hook',
+                '/payment/hook',
+                [HttpMethod.POST],
+                amazonS3FullAccess,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'paymentCheckout',
+                'payment/checkout',
+                '/payment/checkout',
+                [HttpMethod.POST],
+                amazonDynamoDBFullAccessWithSSMFullAccess,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'product',
+                'product',
+                '/product',
+                [HttpMethod.POST],
+                amazonDynamoDBFullAccess,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'products',
+                'products',
+                '/products',
+                [HttpMethod.POST],
+                amazonDynamoDBFullAccess,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'productImage',
+                'product/id/image',
+                '/product/{id}/image',
+                [HttpMethod.POST, HttpMethod.DELETE],
+                amazonS3FullAccess,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'orderCreate',
+                'order/create',
+                '/order/create',
+                [HttpMethod.POST],
+                amazonDynamoDBFullAccess,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'order',
+                'order',
+                '/order',
+                [HttpMethod.POST],
+                amazonDynamoDBFullAccess,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'orderIntent',
+                'order/intent',
+                '/order/{intent}',
+                [HttpMethod.POST],
+                amazonDynamoDBFullAccess,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute('country', 'country', '/country', [HttpMethod.GET]),
+        );
+        httpApi.addRoutes(
+            createRoute('category', 'category', '/category', [HttpMethod.GET]),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'auth',
+                'auth',
+                '/auth',
+                [HttpMethod.GET],
+                amazonCognitoPowerUser,
+                authorizer,
+            ),
+        );
+        httpApi.addRoutes(
+            createRoute(
+                'users',
+                'users',
+                '/users',
+                [HttpMethod.GET],
+                amazonCognitoPowerUser,
+                authorizer,
+            ),
+        );
+
+        const productIdOptions: AddRoutesOptions = {
+            integration: new apiGatewayIntegrations.HttpLambdaIntegration(
+                'productId',
+                createFunction('productId', 'product/id', amazonDynamoDBFullAccess),
+            ),
+            path: `/${apiVersion}/product/{id}`,
+        };
+        httpApi.addRoutes({
+            ...productIdOptions,
+            methods: [HttpMethod.GET],
         });
-    }
-
-    private addRoutes(
-        httpApi: HttpApi,
-        environment: KeyValue,
-        authorizer?: IHttpRouteAuthorizer,
-        roles?: Record<string, Role>
-    ) {
-        const routes = [
-            { handler: 'register', entry: 'register', path: '/register', methods: [HttpMethod.POST], role: roles?.amazonCognitoPowerUser },
-            { handler: 'login', entry: 'login', path: '/login', methods: [HttpMethod.POST], role: roles?.amazonCognitoPowerUser },
-            { handler: 'logout', entry: 'logout', path: '/logout', methods: [HttpMethod.POST], role: roles?.amazonCognitoPowerUser },
-            { handler: 'refresh', entry: 'refresh', path: '/refresh', methods: [HttpMethod.POST], role: roles?.amazonCognitoPowerUser },
-            { handler: 'verify', entry: 'verify', path: '/verify', methods: [HttpMethod.POST], authorizer },
-            { handler: 'userGroup', entry: 'userGroup', path: '/user-group/{groupname}', methods: [HttpMethod.POST, HttpMethod.DELETE], role: roles?.amazonCognitoPowerUser, authorizer },
-            { handler: 'paymentHook', entry: 'payment/hook', path: '/payment/hook', methods: [HttpMethod.POST], role: roles?.amazonS3FullAccess },
-            { handler: 'paymentCheckout', entry: 'payment/checkout', path: '/payment/checkout', methods: [HttpMethod.POST], role: roles?.amazonDynamoDBFullAccessWithSSMFullAccess, authorizer },
-            // Add more routes here as needed...
-        ];
-
-        routes.forEach(route => {
-            httpApi.addRoutes(this.createRoute(route.handler, route.entry, route.path, route.methods, route.role, route.authorizer));
+        httpApi.addRoutes({
+            ...productIdOptions,
+            methods: [HttpMethod.PUT, HttpMethod.DELETE],
+            authorizer,
         });
 
-        // Special case for productId with GET and PUT/DELETE
-        const productIdOptions = this.createRoute('productId', 'product/id', '/product/{id}', [HttpMethod.GET], roles?.amazonDynamoDBFullAccess);
+        const s3EventFunction = createFunction(
+            's3Event',
+            's3Event',
+            amazonDynamoDBFullAccess,
+        );
+        productBucket.addEventNotification(
+            EventType.OBJECT_CREATED,
+            new LambdaDestination(s3EventFunction),
+            // 👇 only invoke lambda if object matches the filter
+            // {prefix: 'test/', suffix: '.yaml'},
+        );
 
-        httpApi.addRoutes({ ...productIdOptions, methods: [HttpMethod.GET] });
+        /*
+        const productOptions: AddRoutesOptions = {
+          integration: new apiGatewayIntegrations.HttpLambdaIntegration(
+            'product',
+            createFunction('product', 'product', amazonDynamoDBFullAccess),
+          ),
+          path: '/' + apiVersion + '/product',
+        };
+        httpApi.addRoutes({
+          ...productOptions,
+          methods: [HttpMethod.GET],
+        });
+        httpApi.addRoutes({
+          ...productOptions,
+          methods: [HttpMethod.POST],
+          authorizer,
+        });
+        */
 
-        httpApi.addRoutes({ ...productIdOptions, methods: [HttpMethod.PUT, HttpMethod.DELETE], authorizer });
-
-        // Additional static routes
-        const staticRoutes = [
-            { handler: 'auth', entry: 'auth', path: '/auth', method: [HttpMethod.GET], role: roles?.amazonCognitoPowerUser, authorizer },
-            { handler: 'users', entry: 'users', path: '/users', method: [HttpMethod.GET], role: roles?.amazonCognitoPowerUser, authorizer }
-            // Add more static routes here as needed...
-        ];
-
-        staticRoutes.forEach(route => {
-            httpApi.addRoutes(this.createRoute(route.handler, route.entry, route.path, route.method, route.role, route.authorizer))
-        })
-    }
-
-    private setupS3EventNotifications(productBucket: Bucket, role?: Role) {
-        const s3EventFunction = this.createFunction('s3Event', 's3Event', role);
-        productBucket.addEventNotification(EventType.OBJECT_CREATED, new LambdaDestination(s3EventFunction));
+        /*
+        httpApi.addRoutes(
+          createRoute(
+            'productId',
+            'product/id',
+            '/product/{id}',
+            [HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE],
+            authorizer,
+            amazonDynamoDBFullAccess,
+          ),
+        );
+        */
     }
 }

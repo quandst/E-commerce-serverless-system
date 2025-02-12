@@ -60,6 +60,7 @@ interface OrderTableOrders {
 }
 interface OrderLocation {
     country: string;
+    // city: string,
     address: string;
 }
 export interface Orders {
@@ -74,12 +75,14 @@ export interface OrderTable {
     logs: string;
     intent: string;
     createdAt: number;
+    location?: OrderLocation;
 }
 export type OrderTableKeys = keyof OrderTable;
 interface Country {
     code: string;
     name: string;
     emoji: string;
+    unicode: string;
     image: string;
 }
 export type DeepPartial<T> = T extends object
@@ -112,7 +115,8 @@ export const lambdaResponse = (
     // if (statusCode === 400 || statusCode === 500) {
     //   value = {
     //     error: value,
-    //   };lambdaResponse
+    //   };
+    // }
     return {
         headers: contentType,
         body: JSON.stringify(value),
@@ -121,7 +125,7 @@ export const lambdaResponse = (
 };
 export const tokensToCookies = (tokens?: AuthenticationResultType) => {
     const cookies: string[] = [];
-    const options: cookie.CookieSerializeOptions = {
+    const options: cookie.SerializeOptions = {
         httpOnly: true,
         // Safari does not save cookies if sameSite:secure and client is not https://
         secure: true,
@@ -177,8 +181,7 @@ export const userProperties = (
     };
 };
 export const isAdmin = (event: APIGatewayProxyEventV2) => {
-    const claims = event.requestContext
-        .authorizer as unknown as LambdaRequestContext;
+    const claims = (event.requestContext as any).authorizer as LambdaRequestContext;
     return (
         claims?.lambda.accessPayload['cognito:groups']?.includes(
             constants.groups.admin,
@@ -364,7 +367,7 @@ export const getProductsById = async (
 };
 export const stripe = (apiKey: string) => {
     const stripe = new Stripe(apiKey, {
-        apiVersion: '2020-08-27',
+        apiVersion: '2025-01-27.acacia',
         typescript: true,
     });
     return stripe;
@@ -382,7 +385,7 @@ export const loadConfig = async function (parameterName: string) {
 Constants
 */
 export const origins = [
-    'http://localhost:3000'
+    'http://localhost:3000',
 ];
 export const constants = {
     readsPerQuery: 10,
@@ -431,6 +434,7 @@ export const supportedCountries: Country[] = [
         code: 'US',
         name: 'United States',
         emoji: '🇺🇸',
+        unicode: 'U+1F1FA U+1F1F8',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/US.svg',
     },
@@ -438,6 +442,7 @@ export const supportedCountries: Country[] = [
         code: 'CN',
         name: 'China',
         emoji: '🇨🇳',
+        unicode: 'U+1F1E8 U+1F1F3',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CN.svg',
     },
@@ -445,6 +450,7 @@ export const supportedCountries: Country[] = [
         code: 'JP',
         name: 'Japan',
         emoji: '🇯🇵',
+        unicode: 'U+1F1EF U+1F1F5',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/JP.svg',
     },
@@ -452,6 +458,7 @@ export const supportedCountries: Country[] = [
         code: 'DE',
         name: 'Germany',
         emoji: '🇩🇪',
+        unicode: 'U+1F1E9 U+1F1EA',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DE.svg',
     },
@@ -459,6 +466,7 @@ export const supportedCountries: Country[] = [
         code: 'GB',
         name: 'United Kingdom',
         emoji: '🇬🇧',
+        unicode: 'U+1F1EC U+1F1E7',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg',
     },
@@ -466,6 +474,7 @@ export const supportedCountries: Country[] = [
         code: 'IN',
         name: 'India',
         emoji: '🇮🇳',
+        unicode: 'U+1F1EE U+1F1F3',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IN.svg',
     },
@@ -473,6 +482,7 @@ export const supportedCountries: Country[] = [
         code: 'FR',
         name: 'France',
         emoji: '🇫🇷',
+        unicode: 'U+1F1EB U+1F1F7',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FR.svg',
     },
@@ -480,8 +490,40 @@ export const supportedCountries: Country[] = [
         code: 'IT',
         name: 'Italy',
         emoji: '🇮🇹',
+        unicode: 'U+1F1EE U+1F1F9',
         image:
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg',
-    }
+    },
+    {
+        code: 'NG',
+        name: 'Nigeria',
+        emoji: '🇳🇬',
+        unicode: 'U+1F1F3 U+1F1EC',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NG.svg',
+    },
+    {
+        code: 'EG',
+        name: 'Egypt',
+        emoji: '🇪🇬',
+        unicode: 'U+1F1EA U+1F1EC',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EG.svg',
+    },
+    {
+        code: 'ZA',
+        name: 'South Africa',
+        emoji: '🇿🇦',
+        unicode: 'U+1F1FF U+1F1E6',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ZA.svg',
+    },
+    {
+        code: 'GH',
+        name: 'Ghana',
+        emoji: '🇬🇭',
+        unicode: 'U+1F1EC U+1F1ED',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GH.svg',
+    },
 ];
-
