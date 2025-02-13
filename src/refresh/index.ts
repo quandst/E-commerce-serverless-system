@@ -11,11 +11,6 @@ import {
     userProperties,
 } from '../../lib/utils';
 
-interface EnvironmentVariables {
-    userPoolId: string;
-    userPoolClientId: string;
-    region: string;
-}
 
 interface RefreshResponse extends APIGatewayProxyResult {
     cookies?: string[];
@@ -76,6 +71,10 @@ export async function refresh(
         const cookies = tokensToCookies(tokens);
 
         // 7. Get user properties using the identity from the token
+        if (!tokens.IdToken) {
+            console.error('Token refresh failed: No IdToken received from Cognito');
+            return lambdaResponse({ message: 'Token refresh failed' }, 401);
+        }
         const decoded = JSON.parse(Buffer.from(tokens.IdToken.split('.')[1], 'base64').toString());
         const username = decoded['cognito:username'];
 
@@ -88,7 +87,7 @@ export async function refresh(
         return {
             ...lambdaResponse(
                 {
-                    ...userProperties(userGroups.Groups, { Username: username }),
+                    ...userProperties(userGroups.Groups, { Username: username, UserAttributes: [], $metadata: {} }),
                     tokens,
                 },
                 200,

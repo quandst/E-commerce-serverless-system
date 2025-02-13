@@ -5,11 +5,6 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 import { lambdaResponse, tokensToCookies, userProperties } from '../../lib/utils';
 
-interface EnvironmentVariables {
-    userPoolId: string;
-    userPoolClientId: string;
-    region: string;
-}
 
 interface LoginBody {
     username?: string;
@@ -66,6 +61,9 @@ export async function login(
         }
 
         const { username, password } = body;
+        if (!username) {
+            return lambdaResponse({ message: 'Username is required' }, 400);
+        }
 
         // 3. Initialize Cognito provider
         const provider = new CognitoIdentityProvider({ region });
@@ -77,7 +75,7 @@ export async function login(
             AuthFlow: 'ADMIN_NO_SRP_AUTH',
             AuthParameters: {
                 USERNAME: username,
-                PASSWORD: password,
+                PASSWORD: password || '',
             },
         };
 
@@ -103,7 +101,7 @@ export async function login(
         return {
             ...lambdaResponse(
                 {
-                    ...userProperties(userGroups.Groups, { Username: username }), // Assuming this function exists
+                    ...userProperties(userGroups.Groups, { Username: username, UserAttributes: [], $metadata: {} }), // Assuming this function exists
                     tokens,
                 },
                 200,

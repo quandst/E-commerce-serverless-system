@@ -6,10 +6,6 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 import { getCookieValue, lambdaResponse } from '../../lib/utils';
 
-interface EnvironmentVariables {
-    region: string;
-}
-
 interface VerifyEvent {
     queryStringParameters?: {
         code?: string;

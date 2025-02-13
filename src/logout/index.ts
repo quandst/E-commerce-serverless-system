@@ -5,10 +5,6 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 import { getCookieValue, tokensToCookies } from '../../lib/utils';
 
-interface EnvironmentVariables {
-    userPoolClientId: string;
-    region: string;
-}
 
 interface LogoutResponse extends APIGatewayProxyResult {
     cookies: string[];
@@ -32,7 +28,9 @@ export async function logout(
     // 2. Clear cookies (this should always happen)
     const cookies = tokensToCookies(); // Clear all cookies
     const response: LogoutResponse = {
-        cookies
+        cookies,
+        statusCode: 0,
+        body: ''
     };
 
     // 3. Revoke refresh token if it exists

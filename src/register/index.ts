@@ -9,11 +9,6 @@ import {
 import { validate } from 'email-validator';
 import { lambdaResponse, tokensToCookies, userProperties } from '../../lib/utils';
 
-interface EnvironmentVariables {
-    userPoolId: string;
-    userPoolClientId: string;
-    region: string;
-}
 
 interface RegistrationBody {
     username?: string;
@@ -47,7 +42,7 @@ function validateRegistrationBody(body: RegistrationBody): { valid: boolean; err
     if (validate(username)) {
         return { valid: false, error: { name: 'UsernameIsEmailException' } };
     }
-    if (!validate(body?.email)) {
+    if (!body.email || !validate(body.email)) {
         return { valid: false, error: { name: 'EmailInvalidException' } };
     }
     if (

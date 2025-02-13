@@ -7,12 +7,6 @@ import {
     userProperties,
 } from '../../lib/utils';
 
-// Define a type for your environment variables
-interface EnvironmentVariables {
-    region: string;
-    userPoolId: string;
-}
-
 // Helper function to safely get environment variables
 function getEnvironmentVariable(name: string): string {
     const value = process.env[name];
@@ -33,7 +27,7 @@ export async function auth(
         };
 
         // 2. Type assertion for the authorizer context
-        const authorizerContext = event.requestContext.authorizer as LambdaRequestContext;
+        const authorizerContext = (event.requestContext as any).authorizer as LambdaRequestContext;
         const user = authorizerContext?.lambda?.user;
 
         if (!user?.Username) {
