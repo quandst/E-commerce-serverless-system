@@ -33,6 +33,12 @@ This is a high-level view of how the different microservice interact with each o
   <img src="/resources/E-commerce high level architecture.jpg" height="400px" alt="High-level Architecture"/>
 </p>
 
+### CI/CD pipeline
+
+<p align="center">
+  <img src="/resources/CI_CD pipeline.jpg" height="400px" alt="CI/CD pipeline"/>
+</p>
+
 ---
 ### AWS Technologies used
 
@@ -59,11 +65,10 @@ __CI/CD__:
 
 * [AWS CloudFormation](https://aws.amazon.com/cloudformation/) with [AWS Serverless Application Model](https://aws.amazon.com/serverless/sam/) for defining AWS resources as code in most services.
 * [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) for defining AWS resources as code.
-
-__Networking/Routing__:
-
-* [AWS Route 53](https://aws.amazon.com/route53/) scalable DNS and Domain Name Registration. It resolves domain names to it's equivalent IP address.
-* [AWS Certificate Manager (ACM)](https://aws.amazon.com/acm/) makes it easy to provision, manage, deploy, and renew SSL/TLS certificates
+* [Github] (https://github.com/) for storing the project code.
+* [AWS CodePipeline] (https://aws.amazon.com/codepipeline/) for orchestrating the pipeline.
+* [AWS CodeBuild] (https://aws.amazon.com/codebuild/) for building and testing the application.
+* [AWS CodeDeploy] (https://aws.amazon.com/codedeploy/) for deploying the application code.
 
 __Management__:
 
@@ -119,6 +124,41 @@ Before getting started, make sure you have the following requirements:
 ```bash
 aws configure list-profiles
 ```
+
+### Run The Project
+
+Follow these steps to get your development environment set up:
+
+1. **Clone this repository** locally;
+
+```bash
+# Change to the desired directory
+$ cd <desired-directory>
+
+# Clone the repo
+$ git clone https://github.com/quandst/E-commerce-serverless-system.git
+
+# Change to the project directory
+$ cd E-commerce-serverless-system
+
+# Checkout to the dev branch
+$ git checkout dev
+
+# Install dependencies
+npm install
+```
+
+2. Change AWS profile name in **package.json** file at `"cdk": "cdk --profile aws-cli-v2"` from `aws-cli-v2` to your configured profile name
+
+3. At the root directory, run below command:
+```bash
+npm run cdk -- deploy
+```
+4. Wait for provision of all microservices into aws cloud. That’s it!
+
+5. At the root directory, in **cdk-outputs.json** file, the API url can be found with the key `apiUrl`
+
+>Note: Make sure your [Stripe API secret key](https://stripe.com/docs/keys) and [Webhook secret](https://stripe.com/docs/webhooks/quickstart) are stored in [Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) with the parameter name `stripe-secret` and keys `stripe_api_secret_key` and `webhook_signing_secret` for webhooks to function properly.
 
 ## References
 > [Amazon Web Services | Cloud Computing Services](https://aws.amazon.com/)
