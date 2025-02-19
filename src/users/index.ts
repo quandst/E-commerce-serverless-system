@@ -5,11 +5,11 @@ import { lambdaResponse, KeyValue, constants } from '../../lib/utils';
 
 /**
  * Fetches and aggregates user data from Cognito, including group memberships.
- * @param event - The API Gateway proxy event.
+ * @param _event - The API Gateway proxy event.
  * @returns A promise resolving to an API Gateway proxy result containing user data.
  */
 export async function users(
-    event: APIGatewayProxyEventV2,
+    _event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
     try {
         const cognitoProvider = new CognitoIdentityProvider({

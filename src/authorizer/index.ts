@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
+
 import {
     CognitoJwtVerifierProperties,
     CognitoVerifyProperties,
@@ -18,12 +19,6 @@ interface Result {
         [key: string]: CognitoJwtPayload | GetUserCommandOutput;
     };
 }
-
-/**
- * Authorizes API requests by verifying access and ID tokens from cookies.
- * @param event - The API Gateway proxy event containing cookie information.
- * @returns A promise resolving to an object indicating authorization status and context.
- */
 export async function authorizer(
     event: APIGatewayProxyEventV2,
 ): Promise<Result> {
@@ -32,70 +27,45 @@ export async function authorizer(
     };
 
     try {
-        const userPoolId = process.env.userPoolId;
-        const userPoolClientId = process.env.userPoolClientId;
-        const region = process.env.region;
-
-        if (!userPoolId || !userPoolClientId || !region) {
-            console.error(
-                'Missing required environment variables: userPoolId, userPoolClientId, or region',
-            );
-            return result;
-        }
-
         const verifyProperties: {
             userPoolId: string;
         } & Partial<CognitoVerifyProperties> &
             Partial<CognitoJwtVerifierProperties> = {
             tokenUse: 'access',
-            userPoolId: userPoolId,
-            clientId: userPoolClientId,
+            userPoolId: process.env.userPoolId!,
+            clientId: process.env.userPoolClientId!,
         };
-
-        // Verify access token
-        const accessToken = getCookieValue(event, 'AccessToken');
+        // Verify access tokens:
         const accessVerifier = CognitoJwtVerifier.create(verifyProperties);
-        const accessPayload = await verifyToken(
-            accessVerifier,
-            accessToken,
-            'access',
-            userPoolClientId,
-        );
+        const accessToken = getCookieValue(event, 'AccessToken');
+        const accessPayload = await accessVerifier.verify(accessToken, {
+            tokenUse: verifyProperties.tokenUse!,
+            clientId: verifyProperties.clientId!,
+        });
 
-        if (!accessPayload) {
-            console.warn('Access token verification failed.');
-            return result;
-        }
-
-        // Verify ID token
+        // Verify id access tokens:
         verifyProperties.tokenUse = 'id';
-        const idToken = getCookieValue(event, 'IdToken');
         const idVerifier = CognitoJwtVerifier.create(verifyProperties);
-        const idPayload = await verifyToken(
-            idVerifier,
-            idToken,
-            'id',
-            userPoolClientId,
-        );
+        const idToken = getCookieValue(event, 'IdToken');
+        const idPayload = await idVerifier.verify(idToken, {
+            tokenUse: verifyProperties.tokenUse,
+            clientId: verifyProperties.clientId!,
+        });
 
-        if (!idPayload) {
-            console.warn('ID token verification failed.');
-            return result;
-        }
-
-        // Validate token consistency
         if (
-            accessPayload.sub !== idPayload.sub ||
-            accessPayload.exp !== idPayload.exp ||
-            accessPayload.origin_jti !== idPayload.origin_jti
-        ) {
-            console.warn('Token consistency check failed.');
+            accessPayload.sub !== idPayload.sub || // same authenticated user
+            accessPayload.exp !== idPayload.exp || // same expiry time
+            accessPayload.origin_jti !== idPayload.origin_jti // same token origin i.e not authenticated again
+        )
             return result;
-        }
 
-        // Check access token validity via Cognito
-        const cognitoProvider = new CognitoIdentityProvider({ region });
-        const user = await cognitoProvider.getUser({ AccessToken: accessToken });
+        // Check access token is valid
+        const provider = new CognitoIdentityProvider({
+            region: process.env.region,
+        });
+        const user = await provider.getUser({
+            AccessToken: accessToken,
+        });
 
         result.context = {
             accessPayload,
@@ -104,38 +74,9 @@ export async function authorizer(
         };
 
         result.isAuthorized = true;
-        return result;
-    } catch (error) {
-        console.error('Authorization error:', error);
-        return result;
-    }
-}
 
-/**
- * Verifies a JWT token using the provided verifier.
- * @param verifier - The CognitoJwtVerifier instance.
- * @param token - The JWT token to verify.
- * @param tokenUse - The intended use of the token ('access' or 'id').
- * @param clientId - The client ID of the Cognito User Pool.
- * @returns The decoded JWT payload if verification succeeds, otherwise null.
- */
-async function verifyToken(
-    verifier: CognitoJwtVerifier,
-    token: string | null,
-    tokenUse: string,
-    clientId: string,
-): Promise<CognitoJwtPayload | null> {
-    if (!token) {
-        console.warn(`Token is missing.`);
-        return null;
-    }
-    try {
-        return await verifier.verify(token, {
-            tokenUse: tokenUse,
-            clientId: clientId,
-        });
-    } catch (error) {
-        console.error(`Token verification failed:`, error);
-        return null;
+        return result;
+    } catch {
+        return result;
     }
 }
