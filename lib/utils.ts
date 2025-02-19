@@ -112,11 +112,6 @@ export const lambdaResponse = (
     statusCode: number,
     contentType: KeyValue = { 'Content-Type': 'application/json' },
 ): APIGatewayProxyResult => {
-    // if (statusCode === 400 || statusCode === 500) {
-    //   value = {
-    //     error: value,
-    //   };
-    // }
     return {
         headers: contentType,
         body: JSON.stringify(value),
@@ -187,15 +182,6 @@ export const isAdmin = (event: APIGatewayProxyEventV2) => {
             constants.groups.admin,
         ) === true
     );
-
-    /*
-    const claims = event.requestContext.authorizer?.jwt.claims;
-    return (
-      claims &&
-      typeof claims['cognito:groups'] === 'string' &&
-      claims['cognito:groups'].includes('admin_group')
-    );
-    */
 };
 export const strLower = (str: string, capitalize = true) => {
     str = str.replace(/\s\s+/g, ' ').trim();
@@ -218,9 +204,6 @@ export const strLower = (str: string, capitalize = true) => {
         return newStr;
     }
     return str.toLowerCase();
-    // return capitalize
-    //   ? str.charAt(0).toUpperCase() + str.slice(1).toLocaleLowerCase()
-    //   : str.toLowerCase();
 };
 export const validIntNumber = (number: string) => /^[0-9]+$/.test(number);
 export const validFloatNumber = (price: string) => {
@@ -403,7 +386,7 @@ export const constants = {
 export const S3Constants = {
     productImages: 'bucket-product-images',
 };
-export const tokenDomain = '.e-store.gq';
+export const tokenDomain = '';
 const tokenParams = [
     'AccessToken',
     // 'ExpiresIn',
@@ -487,43 +470,50 @@ export const supportedCountries: Country[] = [
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FR.svg',
     },
     {
-        code: 'IT',
-        name: 'Italy',
-        emoji: '🇮🇹',
-        unicode: 'U+1F1EE U+1F1F9',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg',
+        code: 'VN',
+        name: 'Vietnam',
+        emoji: '🇻🇳',
+        unicode: 'U+1F1FB U+1F1F3',
+        image: 'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VN.svg'
     },
     {
-        code: 'NG',
-        name: 'Nigeria',
-        emoji: '🇳🇬',
-        unicode: 'U+1F1F3 U+1F1EC',
+        code: 'BR',
+        name: 'Brazil',
+        emoji: '🇧🇷',
+        unicode: 'U+1F1E7 U+1F1F7',
         image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NG.svg',
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BR.svg',
     },
     {
-        code: 'EG',
-        name: 'Egypt',
-        emoji: '🇪🇬',
-        unicode: 'U+1F1EA U+1F1EC',
+        code: 'CA',
+        name: 'Canada',
+        emoji: '🇨🇦',
+        unicode: 'U+1F1E8 U+1F1E6',
         image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EG.svg',
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CA.svg',
     },
     {
-        code: 'ZA',
-        name: 'South Africa',
-        emoji: '🇿🇦',
-        unicode: 'U+1F1FF U+1F1E6',
+        code: 'KR',
+        name: 'South Korea',
+        emoji: '🇰🇷',
+        unicode: 'U+1F1F0 U+1F1F7',
         image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ZA.svg',
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KR.svg',
     },
     {
-        code: 'GH',
-        name: 'Ghana',
-        emoji: '🇬🇭',
-        unicode: 'U+1F1EC U+1F1ED',
+        code: 'RU',
+        name: 'Russia',
+        emoji: '🇷🇺',
+        unicode: 'U+1F1F7 U+1F1FA',
         image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GH.svg',
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RU.svg',
     },
+    {
+        code: 'AU',
+        name: 'Australia',
+        emoji: '🇦🇺',
+        unicode: 'U+1F1E6 U+1F1FA',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AU.svg',
+    }
 ];
