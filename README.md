@@ -65,10 +65,10 @@ __CI/CD__:
 
 * [AWS CloudFormation](https://aws.amazon.com/cloudformation/) with [AWS Serverless Application Model](https://aws.amazon.com/serverless/sam/) for defining AWS resources as code in most services.
 * [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) for defining AWS resources as code.
-* [Github] (https://github.com/) for storing the project code.
-* [AWS CodePipeline] (https://aws.amazon.com/codepipeline/) for orchestrating the pipeline.
-* [AWS CodeBuild] (https://aws.amazon.com/codebuild/) for building and testing the application.
-* [AWS CodeDeploy] (https://aws.amazon.com/codedeploy/) for deploying the application code.
+* [Github](https://github.com/) for storing the project code.
+* [AWS CodePipeline](https://aws.amazon.com/codepipeline/) for orchestrating the pipeline.
+* [AWS CodeBuild](https://aws.amazon.com/codebuild/) for building and testing the application.
+* [AWS CodeDeploy](https://aws.amazon.com/codedeploy/) for deploying the application code.
 
 __Management__:
 
