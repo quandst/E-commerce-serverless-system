@@ -7,7 +7,11 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest --runInBand --detectOpenHandles --coverage",
+    "cdk": "cdk --profile ",
+    "deploy": "cdk deploy --require-approval never --hotswap --outputs-file ./cdk-outputs.json"
   },
   "repository": {
     "type": "git",

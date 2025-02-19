@@ -16,7 +16,7 @@ node_modules/
 .env
 .env.test
 
-
+dist/
 
 infra/*.js
 *.d.ts
