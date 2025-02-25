@@ -24,7 +24,7 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import cookie from 'cookie';
 import SSM from 'aws-sdk/clients/ssm';
 import Stripe from 'stripe';
-
+import { v4 as uuidv4 } from 'uuid';
 /*
 Types
 */
@@ -384,7 +384,7 @@ export const constants = {
     },
 };
 export const S3Constants = {
-    productImages: 'bucket-product-images',
+    productImages: `bucket-product-images-${uuidv4().replace(/-/g, '')}`,
 };
 export const tokenDomain = '';
 const tokenParams = [

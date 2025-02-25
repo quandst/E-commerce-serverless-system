@@ -32,7 +32,7 @@ export class Database extends Construct {
             removalPolicy: RemovalPolicy.DESTROY,
             partitionKey: { name: partitionKeyName, type: AttributeType.STRING },
             sortKey,
-            pointInTimeRecovery: true,
+            pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
         });
 
         this.configureAutoScaling(table);

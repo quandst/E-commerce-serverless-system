@@ -56,7 +56,7 @@ export class Microservice extends Construct {
             nodeModules?: string[],
         ) => {
             const nodejsFunction = new NodejsFunction(scope, handler, {
-                runtime: Runtime.NODEJS_16_X,
+                runtime: Runtime.NODEJS_18_X,
                 handler,
                 role,
                 entry: join(__dirname, `/../src/${entry}/index.ts`),
