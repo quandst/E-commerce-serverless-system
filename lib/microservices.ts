@@ -170,8 +170,8 @@ export class Microservice extends Construct {
         httpApi.addRoutes(
             createRoute(
                 'paymentHook',
-                'payment/hook',
-                '/payment/hook',
+                'payment/webhook',
+                '/payment/webhook',
                 [HttpMethod.POST],
                 amazonS3FullAccess,
             ),
@@ -238,8 +238,8 @@ export class Microservice extends Construct {
         httpApi.addRoutes(
             createRoute(
                 'orderIntent',
-                'order/intent',
-                '/order/{intent}',
+                'order/cart',
+                '/order/{cart}',
                 [HttpMethod.POST],
                 amazonDynamoDBFullAccess,
                 authorizer,
@@ -300,37 +300,5 @@ export class Microservice extends Construct {
             // 👇 only invoke lambda if object matches the filter
             // {prefix: 'test/', suffix: '.yaml'},
         );
-
-        /*
-        const productOptions: AddRoutesOptions = {
-          integration: new apiGatewayIntegrations.HttpLambdaIntegration(
-            'product',
-            createFunction('product', 'product', amazonDynamoDBFullAccess),
-          ),
-          path: '/' + apiVersion + '/product',
-        };
-        httpApi.addRoutes({
-          ...productOptions,
-          methods: [HttpMethod.GET],
-        });
-        httpApi.addRoutes({
-          ...productOptions,
-          methods: [HttpMethod.POST],
-          authorizer,
-        });
-        */
-
-        /*
-        httpApi.addRoutes(
-          createRoute(
-            'productId',
-            'product/id',
-            '/product/{id}',
-            [HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE],
-            authorizer,
-            amazonDynamoDBFullAccess,
-          ),
-        );
-        */
     }
 }

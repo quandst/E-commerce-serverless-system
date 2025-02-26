@@ -369,6 +369,7 @@ Constants
 */
 export const origins = [
     'http://localhost:3000',
+    'https://e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com'
 ];
 export const constants = {
     readsPerQuery: 10,

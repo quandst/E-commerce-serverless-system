@@ -14,7 +14,7 @@ export class ApiGateway extends Construct {
 
   private createHttpApi(): HttpApi {
     const httpApi = new HttpApi(this, 'HttpApi', {
-      apiName: 'api',
+      apiName: 'e-commerce api',
       corsPreflight: this.getCorsConfiguration(),
     });
 
@@ -35,8 +35,6 @@ export class ApiGateway extends Construct {
         CorsHttpMethod.POST,
         CorsHttpMethod.PUT,
         CorsHttpMethod.DELETE,
-        // CorsHttpMethod.OPTIONS,
-        // CorsHttpMethod.PATCH,
       ],
       allowCredentials: true,
       allowOrigins: origins,
