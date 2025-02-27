@@ -36,7 +36,7 @@ This is a high-level view of how the different microservice interact with each o
 ### CI/CD pipeline
 
 <p align="center">
-  <img src="/resources/CI_CD pipeline.jpg" height="200px" alt="CI/CD pipeline"/>
+  <img src="/resources/CI_CD.jpg" height="200px" alt="CI/CD pipeline"/>
 </p>
 
 ---
