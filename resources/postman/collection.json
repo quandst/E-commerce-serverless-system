@@ -1,0 +1,1732 @@
+{
+    "info": {
+        "name": "E-Store API",
+        "_postman_id": "4ce6f035-c928-4dcc-9959-7432b1834a9d",
+        "description": "E-Store API based on the OpenAPI 3.0 specification.\n\nUseful links:\n- [E-Store repository](https://github.com/quandst/E-commerce-serverless-system)\n- [The source API definition](https://github.com/quandst/E-commerce-serverless-system/resources/api-definition.yml)\n",
+        "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "User",
+            "description": "Access to user related endpoints",
+            "item": [
+                {
+                    "id": "dc5b02bf-ffdc-45ef-a119-dc544305dab6",
+                    "name": "Gets user attributes for the current authenticated user",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "auth"
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"admin\": true,\r\n  \"manageProducts\": true,\r\n  \"emailVerified\": true,\r\n  \"username\": \"user\"\r\n}",
+                            "status": "Returns user attributes",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "640da38b-b83e-4cb4-9ea8-3869533d50c6"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "da88d8ae-5b4d-4e0d-86c9-e3ee0e6b1408"
+                        }
+                    ]
+                },
+                {
+                    "id": "a770f58a-3557-4785-a955-ed3e2d238340",
+                    "name": "Register and returns the authentication cookie",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "register"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"email\": \"email1\",\r\n  \"gender\": \"gender5\",\r\n  \"username\": \"username38\",\r\n  \"password\": \"password38\"\r\n}",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Set-Cookie",
+                                    "value": "",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"admin\": false,\r\n  \"manageProducts\": false,\r\n  \"emailVerified\": false,\r\n  \"username\": \"user\",\r\n  \"tokens\": {\r\n    \"AccessToken\": \"AccessToken\",\r\n    \"IdToken\": \"IdToken\",\r\n    \"RefreshToken\": \"RefreshToken\",\r\n    \"TokenType\": \"Bearer\"\r\n  }\r\n}",
+                            "status": "Successfully registers user.\n\nReturns user attributes and cookies that are to be included  in subsequent requests.",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "c329640b-01de-450a-b34f-0008e081bb5a"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"EmailExistsException\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "c4abfd80-1b12-463b-aa51-6d7cc57cea78"
+                        }
+                    ]
+                },
+                {
+                    "id": "34d0d0e6-befd-49e3-a925-f5c14406a3b6",
+                    "name": "Logs in and returns the authentication cookie",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"identity\": \"identity1\",\r\n  \"password\": \"password5\"\r\n}",
+                            "disabled": false
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Set-Cookie",
+                                    "value": "",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"admin\": false,\r\n  \"manageProducts\": false,\r\n  \"emailVerified\": false,\r\n  \"username\": \"user\",\r\n  \"tokens\": {\r\n    \"AccessToken\": \"AccessToken\",\r\n    \"IdToken\": \"IdToken\",\r\n    \"RefreshToken\": \"RefreshToken\",\r\n    \"TokenType\": \"Bearer\"\r\n  }\r\n}",
+                            "status": "Successfully authenticated.\n\nReturns user attributes and cookies that are to be included  in subsequent requests.",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "c7608e70-9baf-40a0-bd0f-62298154b30d"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"UserNotFoundException\",\r\n  \"$metadata\": {\r\n    \"httpStatusCode\": 400,\r\n    \"attempts\": \"1,\",\r\n    \"totalRetryDelay\": 0\r\n  }\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "712fe9a4-2b6d-4b00-8ba0-7e45be28fd8f"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"NotAuthorizedException\",\r\n  \"$metadata\": {\r\n    \"httpStatusCode\": 400,\r\n    \"attempts\": \"1,\",\r\n    \"totalRetryDelay\": 0\r\n  }\r\n}",
+                            "status": "Password does not match corresponding username/email supplied",
+                            "code": 500,
+                            "name": "Response_500",
+                            "id": "3483a77b-3ad2-4591-8ffa-5e4795b7790f"
+                        }
+                    ]
+                },
+                {
+                    "id": "bd84744b-6eb5-47af-9474-4808093f757c",
+                    "name": "Logs out and deletes the authenticated cookie",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "logout"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "*/*",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Set-Cookie",
+                                    "value": "",
+                                    "disabled": false
+                                }
+                            ],
+                            "status": "Successfully logged out and clears cookie.\n\nReturns no content.",
+                            "code": 204,
+                            "name": "Response_204",
+                            "id": "99c19c74-fbbc-4851-a625-0b596df78991"
+                        }
+                    ]
+                },
+                {
+                    "id": "3a73fe06-d2a4-45fc-8115-010e853cff49",
+                    "name": "Sends or verifies user using code sent via email",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "verify"
+                            ],
+                            "query": [
+                                {
+                                    "key": "code",
+                                    "value": "code1",
+                                    "description": "Code sent to email",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "status": "Sends or verifies Code\n\nReturns no content.",
+                            "code": 204,
+                            "name": "Response_204",
+                            "id": "f5ea7356-718b-4f0e-8b81-21b74f5926a2"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"CodeMismatchException\",\r\n  \"$metadata\": {\r\n    \"httpStatusCode\": 400,\r\n    \"attempts\": \"1,\",\r\n    \"totalRetryDelay\": 0\r\n  }\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "a8ff5e71-6f6d-46f1-bb13-fe802c53b809"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "befb6ed2-1614-46b1-bcb2-866cdbea17dc"
+                        }
+                    ]
+                },
+                {
+                    "id": "6e32373b-64b4-483c-b80e-e78a8b701af7",
+                    "name": "Refreshes tokens using refresh token from cookie",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "refresh"
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Set-Cookie",
+                                    "value": "",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"admin\": false,\r\n  \"manageProducts\": false,\r\n  \"emailVerified\": false,\r\n  \"username\": \"user\",\r\n  \"tokens\": {\r\n    \"AccessToken\": \"AccessToken\",\r\n    \"IdToken\": \"IdToken\",\r\n    \"RefreshToken\": \"RefreshToken\",\r\n    \"TokenType\": \"Bearer\"\r\n  }\r\n}",
+                            "status": "Successfully authenticated.\n\nReturns user attributes and cookies that are to be included  in subsequent requests.",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "3ccd36d4-f8b5-4a3f-857d-db7a22b50df2"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidRefreshTokenException\"\r\n}",
+                            "status": "Refresh token is not supplied or is invalid",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "8a75fe96-db7a-4eb7-99cc-c1763a7b7576"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"NotAuthorizedException\",\r\n  \"$metadata\": {\r\n    \"httpStatusCode\": 400,\r\n    \"attempts\": \"1,\",\r\n    \"totalRetryDelay\": 0\r\n  }\r\n}",
+                            "status": "User is not authorized or invalid refresh token",
+                            "code": 500,
+                            "name": "Response_500",
+                            "id": "feda1337-469c-42d7-8186-13d972440260"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Product",
+            "description": "Access to product related endpoints",
+            "item": [
+                {
+                    "id": "28abfc12-4974-4155-81f8-d4a510c9f7e5",
+                    "name": "Gets supported product categories",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "category"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "[\r\n  \"Grocery\",\r\n  \"Electronics\",\r\n  \"Health & Beauty\",\r\n  \"Automobile\",\r\n  \"Home & Kitchen\",\r\n  \"Phones & Tablets\",\r\n  \"Books\",\r\n  \"Gaming\",\r\n  \"Fashion\",\r\n  \"Sports & Outdoors\"\r\n]",
+                            "status": "Returns supported product categories",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "0538cde9-0064-4cba-89d7-cbc0cd1db429"
+                        }
+                    ]
+                },
+                {
+                    "id": "1e68a669-b11e-418b-aea7-2f41c06b9f93",
+                    "name": "Gets supported countries for delivery",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "country"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "[{\"code\":\"US\",\"name\":\"United States\",\"emoji\":\"🇺🇸\"},{\"code\":\"CN\",\"name\":\"China\",\"emoji\":\"🇨🇳\"},{\"code\":\"JP\",\"name\":\"Japan\",\"emoji\":\"🇯🇵\"}]",
+                            "status": "Returns supported countries for delivery",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "82e56101-b0a4-427d-a221-7b16151ba0ae"
+                        }
+                    ]
+                },
+                {
+                    "id": "d4230b6a-ede7-49a0-98d0-23bfe3623ee1",
+                    "name": "Gets products",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "products"
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "grocery",
+                                    "description": "Product category to base query on",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sort",
+                                    "value": "low",
+                                    "description": "Sort results based on price (low or high)",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "search1",
+                                    "description": "Finds products that starts with or contains a search pattern",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Limits the number of products returned",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"identity\": \"identity1\",\r\n  \"password\": \"password5\"\r\n}",
+                            "disabled": false
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"lastKey\": {\r\n    \"id\": {\r\n      \"S\": \"4ed68898-0d73-41fa-bfea-d4e2f86ce8f3\"\r\n    }\r\n  },\r\n  \"queryResult\": [\r\n    {\r\n      \"id\": \"2907c78c-96d6-495b-8c20-e65801ad9ccb\",\r\n      \"name\": \"Eggs\",\r\n      \"category\": \"Grocery\",\r\n      \"image_1\": true,\r\n      \"image_2\": true,\r\n      \"image_3\": true,\r\n      \"createdAt\": 1234567890,\r\n      \"price\": 70\r\n    },\r\n    {\r\n      \"id\": \"2f206473-7568-470a-a31b-12afa2ba9f3c\",\r\n      \"name\": \"Iphone 12 Pro Max\",\r\n      \"category\": \"Electronics\",\r\n      \"image_1\": true,\r\n      \"image_2\": true,\r\n      \"image_3\": false,\r\n      \"createdAt\": 1234567890,\r\n      \"price\": 1500\r\n    }\r\n  ]\r\n}",
+                            "status": "Returns products matching the query",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "1010a23d-0dfd-4db1-95ab-7dc5bd386615"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidLimitException\"\r\n}",
+                            "status": "Limit supplied is invalid or not a number",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "fbe62f02-e33a-408b-90c3-5e0e57133f41"
+                        }
+                    ]
+                },
+                {
+                    "id": "dc23ffcf-802c-42ce-9283-42fe4de8f142",
+                    "name": "Creates a product",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "product"
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has product management privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"id\": \"2f206473-7568-470a-a31b-12afa2ba9f3c\",\r\n  \"name\": \"Iphone 12 Pro Max\",\r\n  \"category\": \"Electronics\",\r\n  \"image_1\": true,\r\n  \"image_2\": true,\r\n  \"image_3\": false,\r\n  \"createdAt\": 1234567890,\r\n  \"price\": 1500\r\n}",
+                            "status": "Returns product created",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "3f6057b8-059f-40ac-87cd-7d193db32dc8"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidNameException\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "f5acf360-7688-473a-b1b9-4f6971c5c27a"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "3fb5fdd2-aac2-45d8-9f14-15eb30632837"
+                        }
+                    ]
+                },
+                {
+                    "id": "10af86a0-dca8-4f1f-a6c9-d040760da1de",
+                    "name": "getProduct",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "product/:id"
+                            ],
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "id1",
+                                    "type": "string",
+                                    "description": "Product matching the specified id"
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"id\": \"2f206473-7568-470a-a31b-12afa2ba9f3c\",\r\n  \"name\": \"Iphone 12 Pro Max\",\r\n  \"category\": \"Electronics\",\r\n  \"image_1\": true,\r\n  \"image_2\": true,\r\n  \"image_3\": false,\r\n  \"createdAt\": 1234567890,\r\n  \"price\": 1500\r\n}",
+                            "status": "Returns product with the specified id",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "724c9ff2-3b9d-4024-a337-e4501067379a"
+                        },
+                        {
+                            "header": [],
+                            "status": "Product not found.\n\nReturns no content.",
+                            "code": 204,
+                            "name": "Response_204",
+                            "id": "5e7662fd-c88e-4b24-a5b1-4aa49a8d0c15"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidProductIdException\"\r\n}",
+                            "status": "Product id is not supplied or is invalid",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "af7b2a59-a53b-433b-bf4b-8eacf5db7c24"
+                        }
+                    ]
+                },
+                {
+                    "id": "327130ed-dd16-4765-b790-b6dcf7af20fd",
+                    "name": "updateProduct",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "product/:id"
+                            ],
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "id1",
+                                    "type": "string",
+                                    "description": "Product matching the specified id"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has product management privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"id\": \"2f206473-7568-470a-a31b-12afa2ba9f3c\",\r\n  \"name\": \"Iphone 12 Pro Max\",\r\n  \"category\": \"Electronics\",\r\n  \"image_1\": true,\r\n  \"image_2\": true,\r\n  \"image_3\": false,\r\n  \"createdAt\": 1234567890,\r\n  \"price\": 1500\r\n}",
+                            "status": "Returns updated product with the specified id",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "427fd259-b4ba-425b-abe2-5117fcf53a13"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidProductIdException\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "4f671f9c-b34b-4271-a082-69e423c6507f"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "5109dfc2-af1f-4299-a1ee-d7275163b1c3"
+                        }
+                    ]
+                },
+                {
+                    "id": "83ee03d4-1425-4a11-b39e-d562687d2f0b",
+                    "name": "deleteProduct",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "product/:id"
+                            ],
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "id1",
+                                    "type": "string",
+                                    "description": "Product matching the specified id"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has product management privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"$metadata\": {\r\n    \"httpStatusCode\": 200,\r\n    \"attempts\": \"1,\",\r\n    \"totalRetryDelay\": 0\r\n  }\r\n}",
+                            "status": "Deletes product if it exists",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "04d4816a-d02c-4e51-bb47-a7a7eef7898f"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "3a731765-c5cc-4c8a-b0bb-07f0ed30285a"
+                        }
+                    ]
+                },
+                {
+                    "id": "e8fb7e7b-8726-4bc8-ac5a-ee2887b02ec7",
+                    "name": "getUploadUrl",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "product/:id/image"
+                            ],
+                            "query": [
+                                {
+                                    "key": "slot",
+                                    "value": "1",
+                                    "description": "Image slot (1-3)",
+                                    "disabled": false
+                                }
+                            ],
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "id1",
+                                    "type": "string",
+                                    "description": "Product matching the specified id"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has product management privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"url\": \"https://s3.amazonaws.com/bucket-product-images\",\r\n  \"fields\": {\r\n    \"key\": \"2907c78c-96d6-495b-8c20-e65801ad9ccb\",\r\n    \"acl\": \"public-read\",\r\n    \"Content-Type\": \"image/jpeg\",\r\n    \"bucket\": \"bucket-product-images\",\r\n    \"X-Amz-Algorithm\": \"AWS4-HMAC-SHA256\",\r\n    \"X-Amz-Credential\": \"ASIA2MNLEVZWO2WVJSBC/20220814/us-east-1/s3/aws4_request\",\r\n    \"X-Amz-Date\": \"20220814T152446Z\",\r\n    \"X-Amz-Security-Token\": \"IQoJb3JpZ2luX2VjEEAaCXVzLWVhc3QtMSJIMEYCIQCzwnoSMhWlVcBM1olsj9qoCu+SR92JebKUfdAulReOhAIhALLvCaoLaxvDLtZsK1RCP5SKD0UcKAeH9mvMZa2K7TzUKqQDCKn//////////wEQABoMNzEzODYwMzYxODM2IgykOydY6mnoFsA3ZLcq+ALGzKrJxpvSyY+h5OA/P4/N4wcoQkuQ6Tv2yw8Njry2PdFOdP/F3dLZrY7NCdhMy8BljfQHb0qjPv2k7N+RVoP3yGjeu/hvWifas518K+PK3b+q945yn+rRYuJeRYGQOoz4LLi+N+e4/Arb1QxIpP1Ecy0MpJDi6E+l6lGkkj4Rvjot13+btmWyURwiiWEF8Qyw+5D4lXKMojphAxyeZYxSHJbke+1aArJmtoAbcFG4FsIz8miyOIiOmYh0MB3BNFzUOAKoZtS0FKFBjsvZsL0Kj2DYfQkbDmF4Ul4+y9WcBP7q\",\r\n    \"Policy\": \"eyJleHBpcmF0aW9uIjoiMjAyMi0wOC0xNFQxNToyOTo0NloiLCJjb25kaXRpb25zIjpbWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsMCwxMDAwMDAwXSx7ImtleSI6IjRlZDY4ODk4LTBkNzMtNDFmYS1iZmVhLWQ0ZTJmODZjZThmMy8yIn0seyJhY2wiOiJwdWJsaWMtcmVhZCJ9LHsiQ29udGVudC1UeXBlIjoiaW1hZ2UvanBlZyJ9LHsiYnVja2V0IjoiYnVja2V0LXByb2R1Y3QtaW1hZ2VzIn0seyJYLUFtei1BbGdvcml0aG0iOiJBV1M0LUhNQUMtU0hBMjU2In0seyJYLUFtei1DcmVkZW50aWFsIjoiQVNJQTJNTkxFVlpXTzJXVkpTQkMvMjAyMjA4MTQvdXMtZWFzdC0xL3MzL2F3czRfcmVxdWVzdCJ9LHsiWC1BbXotRGF0ZSI6IjIwMjIwODE0VDE1MjQ0NloifSx7IlgtQW16LVNlY3VyaXR5LVRva2VuIjoiSVFvSmIzSnBaMmx1WDJWakVFQWFDWFZ6TFdWaGMzUXRNU0pJTUVZQ0lRQ3p3bm9TTWhXbFZjQk0xb2xzajlxb0N1K1NSOTJKZWJLVWZkQX=\",\r\n    \"X-Amz-Signature\": \"e7a14cb1e0d2c6d821c12ecbc6bc84d9208d25002fa7665c5ac090c8ea7a518f\"\r\n  }\r\n}",
+                            "status": "Returns upload url and keys",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "b407e866-1289-409e-a5a2-11cc1d208792"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidProductIdException\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "8da87df7-0ad4-41d7-ac43-b61deb6372ce"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "ff7126a6-a5b0-4716-af04-afeddc286254"
+                        }
+                    ]
+                },
+                {
+                    "id": "d3cdf757-aef4-45c6-a332-0250679b06bb",
+                    "name": "deleteProductImage",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "product/:id/image"
+                            ],
+                            "query": [
+                                {
+                                    "key": "slot",
+                                    "value": "1",
+                                    "description": "Image slot (1-3)",
+                                    "disabled": false
+                                }
+                            ],
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "id1",
+                                    "type": "string",
+                                    "description": "Product matching the specified id"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has product management privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"updateResult\": {\r\n    \"$metadata\": {\r\n      \"httpStatusCode\": 200,\r\n      \"attempts\": \"1,\",\r\n      \"totalRetryDelay\": 0\r\n    }\r\n  },\r\n  \"deleteResult\": {\r\n    \"$metadata\": {\r\n      \"httpStatusCode\": 200,\r\n      \"attempts\": \"1,\",\r\n      \"totalRetryDelay\": 0\r\n    }\r\n  }\r\n}",
+                            "status": "Deletes and update product image status",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "a58bd692-b2c3-4f9e-884a-883b29baa364"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidProductIdException\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "a6ba2101-d581-4695-bd8c-24b283eddb9d"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "1c81741a-8db5-48ba-b93c-53c3736ed3db"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Order",
+            "description": "Access to orders related endpoints",
+            "item": [
+                {
+                    "id": "43dbe03c-813f-48c5-9afe-a06993bd6269",
+                    "name": "Gets orders",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "order"
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "succeeded",
+                                    "description": "Order category to base query on.\n\n(all, requested, succeeded or canceled)",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Limits the number of products returned",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"identity\": \"identity1\",\r\n  \"password\": \"password5\"\r\n}",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\"lastKey\":{\"user\":{\"S\":\"user\"},\"intent\":{\"S\":\"pi_3LQJkXJcU3yoQ34p160oKEAQ\"},\"queryResult\":{\"orders\":[{\"productId\":\"2f206473-7568-470a-a31b-12afa2ba9f3c\",\"name\":\"Iphone 12 Pro Max\",\"category\":\"Electronics\",\"count\":5,\"slot\":1,\"price\":1500},{\"productId\":\"2907c78c-96d6-495b-8c20-e65801ad9ccb\",\"name\":\"Eggs\",\"category\":\"Grocery\",\"count\":2,\"slot\":1,\"price\":70}],\"status\":\"PAYMENT CREATED\",\"amount\":7640,\"createdAt\":1234567890,\"user\":\"user\",\"intent\":\"pi_3LQJkXJcU3yoQ34p160oKEAQ\",\"logs\":\"Payment created.\",\"location\":{\"country\":\"France\",\"address\":\"Paris\"}}}}",
+                            "status": "Returns orders",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "1ef0a689-43cd-4909-a291-fbe08926c207"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidLimitException\"\r\n}",
+                            "status": "Limit supplied is invalid or not a number",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "0ba16cd0-0295-47da-a947-d1588b61c622"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "56ffa2d0-2693-4867-88a0-f72aace73dac"
+                        }
+                    ]
+                },
+                {
+                    "id": "554fdb56-4c86-4322-826f-cee4654a9a9a",
+                    "name": "createOrder",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "order/create"
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "any",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"orders\": [\r\n    {\r\n      \"productId\": \"2f206473-7568-470a-a31b-12afa2ba9f3c\",\r\n      \"name\": \"Iphone 12 Pro Max\",\r\n      \"category\": \"Electronics\",\r\n      \"count\": 5,\r\n      \"slot\": 1,\r\n      \"price\": 1500\r\n    },\r\n    {\r\n      \"productId\": \"2907c78c-96d6-495b-8c20-e65801ad9ccb\",\r\n      \"name\": \"Eggs\",\r\n      \"category\": \"Grocery\",\r\n      \"count\": 2,\r\n      \"slot\": 1,\r\n      \"price\": 70\r\n    }\r\n  ],\r\n  \"status\": \"PAYMENT CREATED\",\r\n  \"amount\": 7640,\r\n  \"createdAt\": 1234567890,\r\n  \"user\": \"user\",\r\n  \"intent\": \"cart\",\r\n  \"logs\": \"Payment created.\",\r\n  \"location\": {\r\n    \"country\": \"France\",\r\n    \"address\": \"Paris\"\r\n  }\r\n}",
+                            "status": "Returns order created",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "e09ade3d-eaee-43fa-8139-b0697a0f7895"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"InvalidOrderException\"\r\n}",
+                            "status": "Order is not supplied or is invalid",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "b13c0481-aa62-45cf-a9bd-ff0987a106bd"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "1734f197-aaca-4d16-9a41-716d8c91e8c8"
+                        }
+                    ]
+                },
+                {
+                    "id": "75a7b287-f9c7-46d7-9fe4-093cefb337be",
+                    "name": "getOrder",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "order/:intent"
+                            ],
+                            "variable": [
+                                {
+                                    "id": "intent",
+                                    "key": "intent",
+                                    "value": "cart",
+                                    "type": "string",
+                                    "description": "Order matching the specified intent"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "any",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\"orders\":[{\"productId\":\"2f206473-7568-470a-a31b-12afa2ba9f3c\",\"name\":\"Iphone 12 Pro Max\",\"category\":\"Electronics\",\"count\":5,\"slot\":1,\"price\":1500},{\"productId\":\"2907c78c-96d6-495b-8c20-e65801ad9ccb\",\"name\":\"Eggs\",\"category\":\"Grocery\",\"count\":2,\"slot\":1,\"price\":70}],\"status\":\"PAYMENT CREATED\",\"amount\":7640,\"createdAt\":1234567890,\"user\":\"user\",\"intent\":\"cart\",\"logs\":\"Payment created.\",\"location\":{\"country\":\"France\",\"address\":\"Paris\"}}",
+                            "status": "Returns order with the specified intent",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "10225776-fde4-43e5-b93f-83ec36dd1677"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"No Intent Specified\"\r\n}",
+                            "status": "Intent is not supplied or is invalid",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "a1cfe18e-020f-42f5-9cee-b4d82ca074ea"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "0189d574-8184-4569-828e-c084fb9f8ebf"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Payment",
+            "description": "Access to payments related endpoints",
+            "item": [
+                {
+                    "id": "cbeff6d8-cbca-4a01-9500-62ce75a20646",
+                    "name": "checkoutOrder",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "payment/checkout"
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "disabled": false
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"clientSecret\": \"pi_3LWlbXJcU3yoQ34p1dpJ5VSZ_secret_GGzg7VR4JGdA5rkKNGxyACAFY\",\r\n  \"amount\": 1500.0\r\n}",
+                            "status": "Returns client secret and amount for card payment",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "141db6bc-bb2a-449d-82f9-dd43d7ed7ecf"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"NoOrderInCartException\"\r\n}",
+                            "status": "Order is not supplied or is invalid",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "ae74441f-3e7d-4d90-8181-71462b8bdd63"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "21fd5b13-2f5e-4c85-8840-c6d747060afd"
+                        }
+                    ]
+                },
+                {
+                    "id": "837362b2-02fd-4f49-9f9d-f5eddce6ec54",
+                    "name": "paymentHook",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "payment/hook"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\"$metadata\":{\"httpStatusCode\":400,\"attempts\":\"1,\",\"totalRetryDelay\":0}}",
+                            "status": "Returns payment update status",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "4fc4ee7d-ca78-4c28-a619-3a236dea0b82"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"no Stripe signature received in header, returning 400 Bad Request\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "a58eda9d-9f2b-4669-b0e3-c11b45002c51"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "description": "Access to managing users related endpoints",
+            "item": [
+                {
+                    "id": "8597ca1b-5ecc-4f0e-82e3-79513471f2a6",
+                    "name": "Gets users",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "users"
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has admin privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "[\r\n  {\r\n    \"username\": \"user1\",\r\n    \"group\": \"admin_group\",\r\n    \"status\": \"CONFIRMED\",\r\n    \"gender\": \"female\"\r\n  },\r\n  {\r\n    \"username\": \"user2\",\r\n    \"group\": \"manage_product_group\",\r\n    \"status\": \"CONFIRMED\",\r\n    \"gender\": \"male\"\r\n  },\r\n  {\r\n    \"username\": \"user3\",\r\n    \"group\": \"\",\r\n    \"status\": \"CONFIRMED\",\r\n    \"gender\": \"male\"\r\n  }\r\n]",
+                            "status": "Returns all users",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "77a35ed6-f8ac-4a57-a1ad-0ea7dba7635d"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "e4e05827-2b93-4337-a31d-9010db794759"
+                        }
+                    ]
+                },
+                {
+                    "id": "44daf682-d0b3-458c-9029-f7b4a1b6f59e",
+                    "name": "addToGroup",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "user-group/:groupname"
+                            ],
+                            "query": [
+                                {
+                                    "key": "username",
+                                    "value": "user",
+                                    "description": "Username of user to update group",
+                                    "disabled": false
+                                }
+                            ],
+                            "variable": [
+                                {
+                                    "id": "groupname",
+                                    "key": "groupname",
+                                    "value": "admin_group",
+                                    "type": "string",
+                                    "description": "Name of the group"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has admin privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"username\": \"user1\",\r\n  \"group\": \"manage_product_group\"\r\n}",
+                            "status": "Returns updated user group",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "b8114ff1-2dc6-4836-85d1-dd92ea10421b"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"EmptyGroupException\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "078d75f8-c19a-4b88-98a1-c639d0b1561a"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "c1d9f9e4-b5bd-4deb-9a6d-21597fe443d4"
+                        }
+                    ]
+                },
+                {
+                    "id": "d36effcd-496d-4fca-92b6-036eb1551f1b",
+                    "name": "removeFromGroup",
+                    "request": {
+                        "url": {
+                            "protocol": "https",
+                            "host": "e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com",
+                            "path": [
+                                "user-group/:groupname"
+                            ],
+                            "query": [
+                                {
+                                    "key": "username",
+                                    "value": "user",
+                                    "description": "Username of user to update group",
+                                    "disabled": false
+                                }
+                            ],
+                            "variable": [
+                                {
+                                    "id": "groupname",
+                                    "key": "groupname",
+                                    "value": "admin_group",
+                                    "type": "string",
+                                    "description": "Name of the group"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "disabled": false
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "disabled": false
+                        },
+                        "description": "This can only be done by an authenticated user who also has admin privilege."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"username\": \"user1\",\r\n  \"group\": \"\"\r\n}",
+                            "status": "Returns updated user group",
+                            "code": 200,
+                            "name": "Response_200",
+                            "id": "dcddb26d-26e7-47b4-8bd6-09862e55bc20"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"name\": \"EmptyGroupException\"\r\n}",
+                            "status": "",
+                            "code": 400,
+                            "name": "Response_400",
+                            "id": "b8f0d7fd-62b3-41de-a867-d6e5667bff48"
+                        },
+                        {
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json",
+                                    "disabled": false
+                                }
+                            ],
+                            "body": "{\r\n  \"message\": \"Forbidden\"\r\n}",
+                            "status": "User is not authorized",
+                            "code": 403,
+                            "name": "Response_403",
+                            "id": "c8f448a2-6b2a-431d-a0a2-33277042c8d3"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "variable": [],
+    "auth": {
+        "type": "noauth"
+    }
+}

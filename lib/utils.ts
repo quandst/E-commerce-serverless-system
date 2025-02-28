@@ -125,7 +125,7 @@ export const tokensToCookies = (tokens?: AuthenticationResultType) => {
         // Safari does not save cookies if sameSite:secure and client is not https://
         secure: true,
         sameSite: 'strict',
-        path: '/',
+        path: '/dev/v1',
         domain: tokenDomain,
     };
     if (!tokens) {
@@ -369,7 +369,8 @@ Constants
 */
 export const origins = [
     'http://localhost:3000',
-    'https://e2de5ykooh.execute-api.ap-southeast-1.amazonaws.com'
+    'https://e-store.store',
+    'https://api.e-store.store/dev/v1',
 ];
 export const constants = {
     readsPerQuery: 10,
@@ -387,7 +388,7 @@ export const constants = {
 export const S3Constants = {
     productImages: `bucket-product-images-${uuidv4().replace(/-/g, '')}`,
 };
-export const tokenDomain = '';
+export const tokenDomain = '.e-store.store';
 const tokenParams = [
     'AccessToken',
     // 'ExpiresIn',

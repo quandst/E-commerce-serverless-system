@@ -11,7 +11,8 @@ info:
     - [E-Store repository](https://github.com/quandst/E-commerce-serverless-system)
     - [The source API definition](https://github.com/quandst/E-commerce-serverless-system/resources/api-definition.yml)
 servers:
-  - url: 'https://api.e-store.gq/v1'
+  - url: 'https://api.e-store.store/dev/v1'
+    description: 'Development server'
 tags:
   - name: User
     description: Access to user related endpoints
@@ -208,11 +209,11 @@ paths:
                   type: string
                 example:
                   [
-                    'AccessToken=; Max-Age=86400; Domain=.e-store.gq; Path=/;
+                    'AccessToken=; Max-Age=86400; Domain=.e-store.store; Path=/;
                     HttpOnly; Secure; SameSite=Strict',
-                    'IdToken=; Max-Age=86400; Domain=.e-store.gq; Path=/;
+                    'IdToken=; Max-Age=86400; Domain=.e-store.store; Path=/;
                     HttpOnly; Secure; SameSite=Strict',
-                    'RefreshToken=; Max-Age=86400; Domain=.e-store.gq; Path=/;
+                    'RefreshToken=; Max-Age=86400; Domain=.e-store.store; Path=/;
                     HttpOnly; Secure; SameSite=Strict',
                   ]
   /verify:
@@ -929,11 +930,11 @@ components:
         type: string
       example:
         [
-          'AccessToken=AccessToken; Max-Age=86400; Domain=.e-store.gq; Path=/;
+          'AccessToken=AccessToken; Max-Age=86400; Domain=.e-store.store; Path=/;
           HttpOnly; Secure; SameSite=Strict',
-          'IdToken=IdToken; Max-Age=86400; Domain=.e-store.gq; Path=/; HttpOnly;
+          'IdToken=IdToken; Max-Age=86400; Domain=.e-store.store; Path=/; HttpOnly;
           Secure; SameSite=Strict',
-          'RefreshToken=RefreshToken; Max-Age=86400; Domain=.e-store.gq; Path=/;
+          'RefreshToken=RefreshToken; Max-Age=86400; Domain=.e-store.store; Path=/;
           HttpOnly; Secure; SameSite=Strict',
         ]
     User:

@@ -62,10 +62,10 @@ export class Microservice extends Construct {
                 entry: join(__dirname, `/../src/${entry}/index.ts`),
                 bundling: {
                     // minify: true,
-                    // nodeModules: ["aws-lambda", "aws-sdk", "aws-cdk",],
-                    nodeModules,
+                    nodeModules: ['aws-sdk', ...(nodeModules || [])],
+                    // nodeModules,
                     externalModules: [
-                        'aws-sdk', // Use the 'aws-sdk' available in the Lambda runtime
+                        // 'aws-sdk', // Use the 'aws-sdk' available in the Lambda runtime
                     ],
                 },
                 environment,
