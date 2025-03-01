@@ -43,7 +43,7 @@ export async function refresh(
             AccessToken: tokens!.AccessToken,
         });
         const { Groups } = await provider.adminListGroupsForUser({
-            UserPoolId: process.env.userPoolId,
+            UserPoolId: poolData.userPoolId,
             Username: user.Username,
         });
 
@@ -55,7 +55,10 @@ export async function refresh(
                 },
                 200,
             ),
-            cookies,
+            headers: {
+                "Content-Type": "application/json",
+                "Set-Cookie": cookies.join('; '), // 👈 Quan trọng: Đặt cookies vào headers
+            },
         };
     } catch (error) {
         return lambdaResponse(error, 500);

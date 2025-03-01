@@ -102,8 +102,8 @@ export async function register(
         }
 
         // 👇 convert token to cookies
-        // const cookies = tokensToCookies(tokens);
-        // console.log("Generated Cookies:", cookies);
+        const cookies = tokensToCookies(tokens);
+        console.log("Generated Cookies:", cookies);
         return {
             ...lambdaResponse(
                 {
@@ -113,10 +113,10 @@ export async function register(
                 },
                 200,
             ),
-            // headers: {
-            //     "Content-Type": "application/json",
-            //     "Set-Cookie": cookies.join('; '), // 👈 Quan trọng: Đặt cookies vào headers
-            // },
+            headers: {
+                "Content-Type": "application/json",
+                "Set-Cookie": cookies.join('; '), // 👈 Quan trọng: Đặt cookies vào headers
+            },
         };
 
 

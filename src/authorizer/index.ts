@@ -33,8 +33,8 @@ export async function authorizer(
         } & Partial<CognitoVerifyProperties> &
             Partial<CognitoJwtVerifierProperties> = {
             tokenUse: 'access',
-            userPoolId: process.env.userPoolId!,
-            clientId: process.env.userPoolClientId!,
+            userPoolId: poolData.userPoolId!,
+            clientId: poolData.userPoolClientId!,
         };
         // Verify access tokens:
         const accessVerifier = CognitoJwtVerifier.create(verifyProperties);
