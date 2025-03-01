@@ -21,7 +21,7 @@ import {
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
-import cookie from 'cookie';
+import * as cookie from 'cookie';
 import SSM from 'aws-sdk/clients/ssm';
 import Stripe from 'stripe';
 import { v4 as uuidv4 } from 'uuid';
@@ -127,28 +127,40 @@ export const tokensToCookies = (tokens?: AuthenticationResultType) => {
         path: '/',
         domain: tokenDomain,
     };
-    if (!tokens) {
-        tokenParams.forEach(token => {
+    try {
+        // Xử lý trường hợp không có tokens (xóa cookie)
+        if (!tokens) {
+            tokenParams.forEach((tokenName) => {
+                cookies.push(
+                    cookie.serialize(tokenName, "", {
+                        ...options,
+                        maxAge: 0, // Xóa cookie ngay lập tức
+                    })
+                );
+            });
+            return cookies;
+        }
+
+        // Tạo cookie từ tokens
+        tokenParams.forEach((tokenName) => {
+            const tokenValue = tokens[tokenName as keyof AuthenticationResultType] as string | undefined;
+            if (!tokenValue) {
+                console.error(`Token ${tokenName} không tồn tại trong phản hồi xác thực`);
+                return;
+            }
             cookies.push(
-                cookie.serialize(token, '', {
-                    maxAge: 0,
-                    ...options,
-                }),
+                cookie.serialize(
+                    tokenName,
+                    tokenValue,
+                    options
+                )
             );
         });
-    } else {
-        tokenParams.forEach(token => {
-            const value = tokens[token as keyof typeof tokens] as string;
-            if (value) {
-                cookies.push(
-                    cookie.serialize(token, value, {
-                        // in seconds
-                        maxAge: 60 * 60 * 24, // 1day
-                        ...options,
-                    }),
-                );
-            }
-        });
+
+        return cookies;
+    } catch (error) {
+        console.error("Lỗi khi tạo cookies:", error);
+        return []; // Trả về mảng rỗng để tránh crash
     }
     return cookies;
 };
@@ -387,12 +399,12 @@ export const constants = {
 export const S3Constants = {
     productImages: `bucket-product-images-${uuidv4().replace(/-/g, '')}`,
 };
-export const tokenDomain = '.e-store.store';
+const tokenDomain = '.e-store.store';
 const tokenParams = [
     'AccessToken',
     'IdToken',
     'RefreshToken',
-] as const;
+];
 export const supportedCategories = [
     'Grocery',
     'Electronics',
