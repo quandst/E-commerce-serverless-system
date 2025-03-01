@@ -36,7 +36,7 @@ export async function login(
         );
 
         // 👇 convert token to cookies
-        const cookies = tokensToCookies(tokens);
+        // const cookies = tokensToCookies(tokens);
         // 👇 get user properties
         const user = await provider.getUser({
             AccessToken: tokens!.AccessToken,
@@ -54,7 +54,7 @@ export async function login(
                 },
                 200,
             ),
-            cookies,
+            // cookies,
         };
     } catch (error) {
         return lambdaResponse(error, 500);

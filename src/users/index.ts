@@ -2,7 +2,7 @@ import { CognitoIdentityProvider } from '@aws-sdk/client-cognito-identity-provid
 import { APIGatewayProxyEventV2, APIGatewayProxyResult } from 'aws-lambda';
 
 import { lambdaResponse, KeyValue, constants } from '../../lib/utils';
-
+import { poolData } from '../config';
 /**
  * Fetches and aggregates user data from Cognito, including group memberships.
  * @param _event - The API Gateway proxy event.
@@ -13,10 +13,10 @@ export async function users(
 ): Promise<APIGatewayProxyResult> {
     try {
         const cognitoProvider = new CognitoIdentityProvider({
-            region: process.env.region,
+            region: poolData.region,
         });
 
-        const userPoolId = process.env.userPoolId;
+        const userPoolId = poolData.userPoolId;
         if (!userPoolId) {
             console.error('UserPoolId is not defined in environment variables.');
             return lambdaResponse({ message: 'UserPoolId is not defined.' }, 500);

@@ -11,7 +11,10 @@ import {
     strLower,
     UpdateItem,
 } from '../../../lib/utils';
+import {
+    poolData
 
+} from '../../config';
 /**
  * Processes the payment checkout for a user's order.
  * @param event - The API Gateway proxy event.
@@ -36,7 +39,7 @@ export async function paymentCheckout(
         const claims = (event.requestContext as any).authorizer?.lambda as LambdaRequestContext;
         const user = claims.lambda.accessPayload.username!;
 
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
         const { orderTable, cartIntent } = constants;
 
         // Retrieve order from DynamoDB

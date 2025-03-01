@@ -12,6 +12,7 @@ import {
     ProductTable,
     UpdateItem,
 } from '../../lib/utils';
+import { poolData } from '../config';
 
 export async function s3Event(event: { Records: S3EventRecord[] }) {
     try {
@@ -27,7 +28,7 @@ export async function s3Event(event: { Records: S3EventRecord[] }) {
         };
 
         // 👇 check if product exists
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
         const { Item } = await ddbClient.send(new GetItemCommand(params));
         if (!Item) {
             return lambdaResponse({ name: 'InvalidProductIdException' }, 400);

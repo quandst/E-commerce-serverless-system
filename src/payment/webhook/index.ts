@@ -16,6 +16,7 @@ import {
     lambdaResponse,
     PaymentStatus,
 } from '../../../lib/utils';
+import { poolData } from '../../config';
 
 interface SellerMessage {
     outcome: {
@@ -43,7 +44,7 @@ const updatePaymentStatus = async (
     status: PaymentStatus,
     session: Session,
 ): Promise<APIGatewayProxyResult> => {
-    const ddbClient = new DynamoDBClient({ region: process.env.region });
+    const ddbClient = new DynamoDBClient({ region: poolData.region });
     const { cartIntent, orderTable } = constants;
     const { user } = session.metadata;
     const intentId = session.id;

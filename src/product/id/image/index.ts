@@ -15,6 +15,7 @@ import {
     S3Constants,
     UpdateItem,
 } from '../../../../lib/utils';
+import { poolData } from '../../../config';
 
 const { productImages } = S3Constants;
 
@@ -66,7 +67,7 @@ export async function productImage(
             return lambdaResponse({ name: 'InvalidSlotException' }, 400);
 
         const { productTable } = constants;
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
         const { Item } = await ddbClient.send(
             new GetItemCommand({
                 TableName: productTable,

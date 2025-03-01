@@ -22,6 +22,7 @@ import {
     OrderTableKeys,
     KeyValue,
 } from '../../../lib/utils';
+import { poolData } from '../../config';
 
 const { orderTable, cartIntent, orderLogs, cartStatus } = constants;
 
@@ -148,7 +149,7 @@ export async function orderCreate(
             return lambdaResponse({ name: 'InvalidRequestBodyException' }, 400);
         }
 
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
         return await createOrder(ddbClient, requestBody, user);
     } catch (error) {
         console.error('An unexpected error occurred:', error);

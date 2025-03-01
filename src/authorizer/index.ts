@@ -12,6 +12,7 @@ import {
     GetUserCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { getCookieValue } from '../../lib/utils';
+import { poolData } from '../config';
 
 interface Result {
     isAuthorized: boolean;
@@ -61,7 +62,7 @@ export async function authorizer(
 
         // Check access token is valid
         const provider = new CognitoIdentityProvider({
-            region: process.env.region,
+            region: poolData.region,
         });
         const user = await provider.getUser({
             AccessToken: accessToken,

@@ -5,7 +5,7 @@ import {
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
 import { APIGatewayProxyResult, APIGatewayProxyEventV2 } from 'aws-lambda';
 import { isAdmin, lambdaResponse, constants } from '../../lib/utils';
-
+import { poolData } from '../config';
 /**
  * Manages user group assignments in Cognito.
  * @param event - The API Gateway proxy event.
@@ -35,7 +35,7 @@ export async function userGroup(
             return lambdaResponse({ name: 'NotAuthorizedException' }, 403); // Use 403 for unauthorized requests
         }
 
-        const userPoolId = process.env.userPoolId;
+        const userPoolId = poolData.userPoolId;
         if (!userPoolId) {
             console.error('UserPoolId is not defined in environment variables.');
             return lambdaResponse({ message: 'UserPoolId is not defined.' }, 500);
@@ -43,7 +43,7 @@ export async function userGroup(
 
         // Initialize Cognito provider
         const cognitoProvider = new CognitoIdentityProvider({
-            region: process.env.region,
+            region: poolData.region,
         });
 
         // Common parameters for Cognito API calls

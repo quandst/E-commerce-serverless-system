@@ -17,6 +17,7 @@ import {
     PaymentStatus,
     queryItems,
 } from '../../lib/utils';
+import { poolData } from '../config';
 
 const { orderTable, readsPerQuery } = constants;
 
@@ -109,7 +110,7 @@ export async function order(
         // Extract user information from authorizer
         const claims = (event.requestContext as any).authorizer as LambdaRequestContext;
         const user = claims.lambda.accessPayload.username!;
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
 
         // Parse request body
         let requestBody: KeyValue<AttributeValue> | undefined;

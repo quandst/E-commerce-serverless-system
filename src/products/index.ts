@@ -17,7 +17,7 @@ import {
     validIntNumber,
     queryItems,
 } from '../../lib/utils';
-
+import { poolData } from '../config';
 const { productTable, categoryIndex, readsPerQuery } = constants;
 
 /**
@@ -125,7 +125,7 @@ export async function products(
     event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
     try {
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
         const params = event.queryStringParameters;
 
         // Validate and parse limit parameter

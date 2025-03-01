@@ -23,6 +23,7 @@ import {
     UpdateItem,
     validFloatNumber,
 } from '../../../lib/utils';
+import { poolData } from '../../config';
 
 const { productTable } = constants;
 
@@ -164,7 +165,7 @@ export async function productId(
             return lambdaResponse({ name: 'InvalidProductIdException' }, 400);
         }
 
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
         const method = event.requestContext.http.method as HttpMethod;
 
         // Authorize user for DELETE and PUT requests

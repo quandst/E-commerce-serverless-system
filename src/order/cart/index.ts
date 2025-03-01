@@ -23,6 +23,7 @@ import {
     validIntNumber,
     KeyValue,
 } from '../../../lib/utils';
+import { poolData } from '../../config';
 
 const { orderTable, cartIntent, cartStatus, orderLogs } = constants;
 
@@ -222,7 +223,7 @@ export async function orderIntent(
         // Extract user information from authorizer
         const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
         const user = claims.authorizer.lambda.accessPayload.username!;
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
 
         // Validate intent parameter
         const intent = event.pathParameters?.intent;

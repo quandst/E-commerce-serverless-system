@@ -16,7 +16,7 @@ import {
     supportedCategories,
     validFloatNumber,
 } from '../../lib/utils';
-
+import { poolData } from '../config';
 const { productTable } = constants;
 
 /**
@@ -99,7 +99,7 @@ export async function product(
             return lambdaResponse({ name: 'InvalidRequestBodyException' }, 400);
         }
 
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
         return await createProduct(ddbClient, requestBody);
     } catch (error) {
         console.error('An unexpected error occurred:', error);
