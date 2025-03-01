@@ -4,127 +4,59 @@ import {
     CognitoIdentityProvider,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { lambdaResponse, tokensToCookies, userProperties } from '../../lib/utils';
-
-
-interface LoginBody {
-    username?: string;
-    password?: string;
-}
-
-interface LoginResponse extends APIGatewayProxyResult {
-    cookies?: string[];
-}
-
-// Helper function to safely get environment variables
-function getEnvironmentVariable(name: string): string {
-    const value = process.env[name];
-    if (!value) {
-        throw new Error(`Missing environment variable: ${name}`);
-    }
-    return value;
-}
-
-// Function to validate the login body
-function validateLoginBody(body: LoginBody): { valid: boolean; error?: { name: string } } {
-    if (!body.username || body.username.length < 3 || body.username.includes(' ')) {
-        return { valid: false, error: { name: 'UsernameOrEmailInvalidException' } };
-    }
-    if (!body.password || body.password.length < 6) {
-        return { valid: false, error: { name: 'PasswordInvalidException' } };
-    }
-    return { valid: true };
-}
+import { poolData } from '../config';
 
 export async function login(
     event: APIGatewayProxyEventV2,
-): Promise<LoginResponse> {
+): Promise<APIGatewayProxyResult & { cookies?: string[] }> {
     try {
-        // 1. Retrieve environment variables safely
-        const { userPoolId, userPoolClientId, region } = {
-            userPoolId: getEnvironmentVariable('userPoolId'),
-            userPoolClientId: getEnvironmentVariable('userPoolClientId'),
-            region: getEnvironmentVariable('region'),
-        };
+        const body = JSON.parse(event.body || '{}');
+        const username = body?.username;
+        const password = body?.password;
 
-        // 2. Parse and validate the request body
-        let body: LoginBody;
-        try {
-            body = JSON.parse(event.body || '{}');
-        } catch (parseError) {
-            console.error('Error parsing request body:', parseError);
-            return lambdaResponse({ message: 'Invalid request body' }, 400);
+        // 👇 check username/email or password validity
+        if (!username || username.length < 3 || username.includes(' ')) {
+            return lambdaResponse({ name: 'UsernameOrEmailInvalidException' }, 400);
         }
-
-        const validationResult = validateLoginBody(body);
-        if (!validationResult.valid) {
-            return lambdaResponse(validationResult.error, 400);
+        if (!password || password.length < 6) {
+            return lambdaResponse({ name: 'PasswordInvalidException' }, 400);
         }
-
-        const { username, password } = body;
-        if (!username) {
-            return lambdaResponse({ message: 'Username is required' }, 400);
-        }
-
-        // 3. Initialize Cognito provider
-        const provider = new CognitoIdentityProvider({ region });
-
-        // 4. Authenticate the user
+        const provider = new CognitoIdentityProvider({ region: poolData.region });
         const loginParams: AdminInitiateAuthCommandInput = {
-            UserPoolId: userPoolId,
-            ClientId: userPoolClientId,
+            UserPoolId: process.env.userPoolId,
+            ClientId: process.env.userPoolClientId,
             AuthFlow: 'ADMIN_NO_SRP_AUTH',
             AuthParameters: {
                 USERNAME: username,
-                PASSWORD: password || '',
+                PASSWORD: password,
             },
         };
-
         const { AuthenticationResult: tokens } = await provider.adminInitiateAuth(
             loginParams,
         );
 
-        if (!tokens) {
-            console.error('Authentication failed: No tokens received from Cognito');
-            return lambdaResponse({ message: 'Authentication failed' }, 401);
-        }
-
-        // 5. Convert tokens to cookies
+        // 👇 convert token to cookies
         const cookies = tokensToCookies(tokens);
-
-        // 6. Get user properties and groups
-        const userGroups = await provider.adminListGroupsForUser({
-            UserPoolId: userPoolId,
-            Username: username,
+        // 👇 get user properties
+        const user = await provider.getUser({
+            AccessToken: tokens!.AccessToken,
+        });
+        const { Groups } = await provider.adminListGroupsForUser({
+            UserPoolId: poolData.userPoolId,
+            Username: user.Username,
         });
 
-        // 7. Return successful response with tokens and cookies
         return {
             ...lambdaResponse(
                 {
-                    ...userProperties(userGroups.Groups, { Username: username, UserAttributes: [], $metadata: {} }), // Assuming this function exists
+                    ...userProperties(Groups, user),
                     tokens,
                 },
                 200,
             ),
             cookies,
         };
-
-    } catch (error: any) {
-        console.error('Error in login function:', error);
-
-        let errorMessage = 'Login failed';
-        let statusCode = 500;
-
-        if (error instanceof Error) {
-            errorMessage = error.message;
-        } else if (error.name === 'UserNotFoundException') {
-            errorMessage = 'Invalid username or password';
-            statusCode = 400;
-        } else if (error.name === 'NotAuthorizedException') {
-            errorMessage = 'Invalid username or password';
-            statusCode = 401;
-        }
-
-        return lambdaResponse({ message: errorMessage }, statusCode);
+    } catch (error) {
+        return lambdaResponse(error, 500);
     }
 }

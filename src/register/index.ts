@@ -8,17 +8,14 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 import { validate } from 'email-validator';
 import { lambdaResponse, tokensToCookies, userProperties } from '../../lib/utils';
-
+import { poolData } from '../config';
 
 export async function register(
     event: APIGatewayProxyEventV2,
     // context?: Context,
     // callback?: Callback,
 ): Promise<APIGatewayProxyResult & { cookies?: string[] }> {
-    const poolData = {
-        UserPoolId: process.env.userPoolId!,
-        ClientId: process.env.userPoolClientId!,
-    };
+
     try {
         const body = JSON.parse(event.body || '{}');
 
@@ -48,7 +45,7 @@ export async function register(
         const gender = (body.gender as string).trim().toLowerCase();
 
         const signUpParams: SignUpCommandInput = {
-            ClientId: poolData.ClientId,
+            ClientId: poolData.userPoolClientId,
             Username: username,
             Password: password,
             UserAttributes: [
@@ -63,14 +60,14 @@ export async function register(
             ],
         };
         const confirmParams = {
-            UserPoolId: poolData.UserPoolId,
+            UserPoolId: poolData.userPoolId,
             Username: username,
         };
-        const provider = new CognitoIdentityProvider({ region: process.env.region });
+        const provider = new CognitoIdentityProvider({ region: poolData.region });
 
         // 👇 check if username already exists
         const users = await provider.listUsers({
-            UserPoolId: poolData.UserPoolId,
+            UserPoolId: poolData.userPoolId,
             AttributesToGet: ['email'],
             Filter: `email="${email}"`,
         });
@@ -79,20 +76,34 @@ export async function register(
             return lambdaResponse({ name: 'EmailExistsException' }, 400);
         }
 
+        console.log("Calling Cognito SignUp...");
         await provider.signUp(signUpParams);
-        await provider.adminConfirmSignUp(confirmParams);
+        console.log("SignUp successful");
 
-        const { AuthenticationResult: tokens } = await provider.adminInitiateAuth({
-            ...poolData,
+        console.log("Calling AdminConfirmSignUp...");
+        await provider.adminConfirmSignUp(confirmParams);
+        console.log("User confirmed");
+
+        console.log("Initiating Auth...");
+        const authResponse = await provider.adminInitiateAuth({
+            UserPoolId: poolData.userPoolId,
+            ClientId: poolData.userPoolClientId,
             AuthFlow: 'ADMIN_NO_SRP_AUTH',
             AuthParameters: {
                 USERNAME: username,
                 PASSWORD: password,
             },
         });
+        console.log("Auth Response:", authResponse);
+
+        const tokens = authResponse.AuthenticationResult;
+        if (!tokens) {
+            throw new Error("AuthenticationResult is undefined");
+        }
 
         // 👇 convert token to cookies
         const cookies = tokensToCookies(tokens);
+        console.log("Generated Cookies:", cookies);
         return {
             ...lambdaResponse(
                 {
@@ -102,8 +113,13 @@ export async function register(
                 },
                 200,
             ),
-            cookies,
+            headers: {
+                "Content-Type": "application/json",
+                "Set-Cookie": cookies.join('; '), // 👈 Quan trọng: Đặt cookies vào headers
+            },
         };
+
+
     } catch (error) {
         return lambdaResponse(error, 500);
         // return lambdaResponse({ error, event, context, callback }, 500);

@@ -122,10 +122,9 @@ export const tokensToCookies = (tokens?: AuthenticationResultType) => {
     const cookies: string[] = [];
     const options: cookie.SerializeOptions = {
         httpOnly: true,
-        // Safari does not save cookies if sameSite:secure and client is not https://
         secure: true,
         sameSite: 'strict',
-        path: '/dev/v1',
+        path: '/',
         domain: tokenDomain,
     };
     if (!tokens) {
@@ -391,10 +390,8 @@ export const S3Constants = {
 export const tokenDomain = '.e-store.store';
 const tokenParams = [
     'AccessToken',
-    // 'ExpiresIn',
     'IdToken',
     'RefreshToken',
-    // 'TokenType',
 ] as const;
 export const supportedCategories = [
     'Grocery',
