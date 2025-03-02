@@ -11,7 +11,7 @@ info:
     - [E-Store repository](https://github.com/quandst/E-commerce-serverless-system)
     - [The source API definition](https://github.com/quandst/E-commerce-serverless-system/resources/api-definition.yml)
 servers:
-  - url: 'https://api.e-store.store/dev/v1'
+  - url: 'https://api.e-store.store/v1'
     description: 'Development server'
 tags:
   - name: User
