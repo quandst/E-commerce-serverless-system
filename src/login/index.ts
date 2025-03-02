@@ -23,8 +23,8 @@ export async function login(
         }
         const provider = new CognitoIdentityProvider({ region: poolData.region });
         const loginParams: AdminInitiateAuthCommandInput = {
-            UserPoolId: process.env.userPoolId,
-            ClientId: process.env.userPoolClientId,
+            UserPoolId: poolData.userPoolId,
+            ClientId: poolData.userPoolClientId,
             AuthFlow: 'ADMIN_NO_SRP_AUTH',
             AuthParameters: {
                 USERNAME: username,
@@ -56,7 +56,7 @@ export async function login(
             ),
             headers: {
                 "Content-Type": "application/json",
-                "Set-Cookie": cookies.join('; '), // 👈 Quan trọng: Đặt cookies vào headers
+                "Set-Cookie": cookies.join(', '), // 👈 Quan trọng: Đặt cookies vào headers
             },
         };
     } catch (error) {

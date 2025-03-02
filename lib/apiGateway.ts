@@ -29,15 +29,20 @@ export class ApiGateway extends Construct {
         'X-Amz-Date',
         'Authorization',
         'X-Api-Key',
+        'Cookie',
       ],
       allowMethods: [
         CorsHttpMethod.GET,
         CorsHttpMethod.POST,
         CorsHttpMethod.PUT,
         CorsHttpMethod.DELETE,
+        CorsHttpMethod.OPTIONS,
       ],
       allowCredentials: true,
       allowOrigins: origins,
+      exposedHeaders: [
+        "Set-Cookie", // 👈 Cho phép client nhận cookie từ response
+      ],
     };
   }
 }

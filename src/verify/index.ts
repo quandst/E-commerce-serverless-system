@@ -3,12 +3,13 @@ import {
     CognitoIdentityProvider
 } from '@aws-sdk/client-cognito-identity-provider';
 import { getCookieValue, lambdaResponse } from '../../lib/utils';
+import { poolData } from '../config';
 
 export async function verify(
     event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
     try {
-        const provider = new CognitoIdentityProvider({ region: process.env.region });
+        const provider = new CognitoIdentityProvider({ region: poolData.region });
         const args = {
             AccessToken: getCookieValue(event, 'AccessToken'), // event.headers.authorization,
             AttributeName: 'email',

@@ -97,16 +97,52 @@ export const getCookieValue = (
     event: APIGatewayProxyEventV2,
     key: typeof tokenParams[number],
 ) => {
-    if (!event.cookies) return '';
-    const { cookies } = event;
-    const search = `${key.toLowerCase()}=`;
-    for (const cookie of cookies) {
-        if (cookie.toLowerCase().startsWith(search)) {
-            return cookie.substring(search.length);
+    if (!event.cookies || !event.cookies.length) return '';
+
+    const lowerKey = key.toLowerCase(); // 👈 Chuyển key về chữ thường
+
+    for (const cookieStr of event.cookies) {
+        const separatorIndex = cookieStr.indexOf('=');
+        if (separatorIndex === -1) continue;
+
+        const name = cookieStr.substring(0, separatorIndex).trim();
+        const value = cookieStr.substring(separatorIndex + 1).trim();
+
+        if (name.toLowerCase() === lowerKey) { // 👈 So sánh không phân biệt hoa thường
+            return value;
         }
     }
+
     return '';
 };
+
+
+// export const getCookieValue = (
+//     event: APIGatewayProxyEventV2,
+//     key: string,
+// ): string => {
+//     // Kiểm tra nếu không có cookies hoặc mảng cookies rỗng
+//     if (!event.cookies || event.cookies.length === 0) {
+//         console.error('No cookies found in the request.');
+//         return '';
+//     }
+
+//     // Kết hợp tất cả cookies thành một chuỗi và parse
+//     const cookiesHeader = event.cookies.join('; ');
+//     const parsedCookies = cookie.parse(cookiesHeader);
+
+//     // Tìm cookie theo key (không phân biệt hoa thường)
+//     const lowerKey = key.toLowerCase();
+//     for (const [cookieKey, cookieValue] of Object.entries(parsedCookies)) {
+//         if (cookieKey.toLowerCase() === lowerKey) {
+//             console.log(`Found cookie: ${cookieKey}=${cookieValue}`);
+//             return cookieValue ? decodeURIComponent(cookieValue) : ''; // 👈 Giải mã giá trị cookie
+//         }
+//     }
+
+//     console.error(`Cookie "${key}" not found.`);
+//     return '';
+// };
 export const lambdaResponse = (
     value: any,
     statusCode: number,
@@ -123,7 +159,7 @@ export const tokensToCookies = (tokens?: AuthenticationResultType) => {
     const options: cookie.SerializeOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: 'strict',
+        sameSite: 'none',
         path: '/',
         domain: tokenDomain,
     };
@@ -379,9 +415,7 @@ export const loadConfig = async function (parameterName: string) {
 Constants
 */
 export const origins = [
-    'http://localhost:3000',
-    'https://e-store.store',
-    'https://api.e-store.store/dev/v1',
+    'https://api.e-store.store/v1',
 ];
 export const constants = {
     readsPerQuery: 10,

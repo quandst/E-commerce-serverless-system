@@ -115,7 +115,7 @@ export async function register(
             ),
             headers: {
                 "Content-Type": "application/json",
-                "Set-Cookie": cookies.join('; '), // 👈 Quan trọng: Đặt cookies vào headers
+                "Set-Cookie": cookies.join(', '), // 👈 Quan trọng: Đặt cookies vào headers
             },
         };
 

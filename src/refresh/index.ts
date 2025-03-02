@@ -18,6 +18,7 @@ export async function refresh(
     try {
         // 👇 check refresh token exists
         const refreshToken = getCookieValue(event, 'RefreshToken');
+        console.log('Received cookies:', event.cookies);
         if (!refreshToken)
             return lambdaResponse({ name: 'InvalidRefreshTokenException' }, 400);
 
@@ -35,6 +36,10 @@ export async function refresh(
         const { AuthenticationResult: tokens } = await provider.adminInitiateAuth(
             params,
         );
+
+        if (!tokens || !tokens.AccessToken) {
+            return lambdaResponse({ name: "InvalidTokensException" }, 400);
+        }
 
         // 👇 convert token to cookies
         const cookies = tokensToCookies(tokens);
@@ -57,7 +62,7 @@ export async function refresh(
             ),
             headers: {
                 "Content-Type": "application/json",
-                "Set-Cookie": cookies.join('; '), // 👈 Quan trọng: Đặt cookies vào headers
+                "Set-Cookie": cookies.join(', '), // 👈 Quan trọng: Đặt cookies vào headers
             },
         };
     } catch (error) {
