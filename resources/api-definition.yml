@@ -8,8 +8,8 @@ info:
     E-Store API based on the OpenAPI 3.0 specification.
 
     Useful links:
-    - [E-Store repository](https://github.com/quandst/E-commerce-serverless-system)
-    - [The source API definition](https://github.com/quandst/E-commerce-serverless-system/resources/api-definition.yml)
+    - [E-Store repository](https://github.com/quandst/E-commerce-serverless-system/tree/dev)
+    - [The source API definition](https://github.com/quandst/E-commerce-serverless-system/blob/dev/resources/api-definition.yml)
 servers:
   - url: 'https://api.e-store.store/v1'
     description: 'Development server'
@@ -210,11 +210,11 @@ paths:
                 example:
                   [
                     'AccessToken=; Max-Age=86400; Domain=.e-store.store; Path=/;
-                    HttpOnly; Secure; SameSite=Strict',
+                    HttpOnly; Secure; SameSite=None',
                     'IdToken=; Max-Age=86400; Domain=.e-store.store; Path=/;
-                    HttpOnly; Secure; SameSite=Strict',
+                    HttpOnly; Secure; SameSite=None',
                     'RefreshToken=; Max-Age=86400; Domain=.e-store.store; Path=/;
-                    HttpOnly; Secure; SameSite=Strict',
+                    HttpOnly; Secure; SameSite=None',
                   ]
   /verify:
     post:
@@ -762,7 +762,7 @@ paths:
 
   # Users
   /users:
-    post:
+    get:
       tags:
         - Users
       summary: Gets users
@@ -931,11 +931,11 @@ components:
       example:
         [
           'AccessToken=AccessToken; Max-Age=86400; Domain=.e-store.store; Path=/;
-          HttpOnly; Secure; SameSite=Strict',
+          HttpOnly; Secure; SameSite=None',
           'IdToken=IdToken; Max-Age=86400; Domain=.e-store.store; Path=/; HttpOnly;
-          Secure; SameSite=Strict',
+          Secure; SameSite=None',
           'RefreshToken=RefreshToken; Max-Age=86400; Domain=.e-store.store; Path=/;
-          HttpOnly; Secure; SameSite=Strict',
+          HttpOnly; Secure; SameSite=None',
         ]
     User:
       type: object

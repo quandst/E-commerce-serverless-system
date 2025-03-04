@@ -31,12 +31,23 @@ export async function login(
                 PASSWORD: password,
             },
         };
+        // const { AuthenticationResult: tokens } = await provider.adminInitiateAuth(
+        //     loginParams,
+        // );
+
         const { AuthenticationResult: tokens } = await provider.adminInitiateAuth(
             loginParams,
         );
 
+
         // 👇 convert token to cookies
         const cookies = tokensToCookies(tokens);
+        if (!tokens) {
+            throw new Error('Authentication failed, tokens are undefined');
+        }
+
+        console.log("Generated Cookies:", cookies);
+
         // 👇 get user properties
         const user = await provider.getUser({
             AccessToken: tokens!.AccessToken,
@@ -54,10 +65,7 @@ export async function login(
                 },
                 200,
             ),
-            headers: {
-                "Content-Type": "application/json",
-                "Set-Cookie": cookies.join(', '), // 👈 Quan trọng: Đặt cookies vào headers
-            },
+            cookies,
         };
     } catch (error) {
         return lambdaResponse(error, 500);

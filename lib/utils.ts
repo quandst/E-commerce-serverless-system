@@ -25,6 +25,7 @@ import * as cookie from 'cookie';
 import SSM from 'aws-sdk/clients/ssm';
 import Stripe from 'stripe';
 import { v4 as uuidv4 } from 'uuid';
+import { poolData } from '../src/config';
 /*
 Types
 */
@@ -97,52 +98,17 @@ export const getCookieValue = (
     event: APIGatewayProxyEventV2,
     key: typeof tokenParams[number],
 ) => {
-    if (!event.cookies || !event.cookies.length) return '';
-
-    const lowerKey = key.toLowerCase(); // 👈 Chuyển key về chữ thường
-
-    for (const cookieStr of event.cookies) {
-        const separatorIndex = cookieStr.indexOf('=');
-        if (separatorIndex === -1) continue;
-
-        const name = cookieStr.substring(0, separatorIndex).trim();
-        const value = cookieStr.substring(separatorIndex + 1).trim();
-
-        if (name.toLowerCase() === lowerKey) { // 👈 So sánh không phân biệt hoa thường
-            return value;
+    if (!event.cookies) return '';
+    const { cookies } = event;
+    const search = `${key.toLowerCase()}=`;
+    for (const cookie of cookies) {
+        if (cookie.toLowerCase().startsWith(search)) {
+            return cookie.substring(search.length);
         }
     }
-
     return '';
 };
 
-
-// export const getCookieValue = (
-//     event: APIGatewayProxyEventV2,
-//     key: string,
-// ): string => {
-//     // Kiểm tra nếu không có cookies hoặc mảng cookies rỗng
-//     if (!event.cookies || event.cookies.length === 0) {
-//         console.error('No cookies found in the request.');
-//         return '';
-//     }
-
-//     // Kết hợp tất cả cookies thành một chuỗi và parse
-//     const cookiesHeader = event.cookies.join('; ');
-//     const parsedCookies = cookie.parse(cookiesHeader);
-
-//     // Tìm cookie theo key (không phân biệt hoa thường)
-//     const lowerKey = key.toLowerCase();
-//     for (const [cookieKey, cookieValue] of Object.entries(parsedCookies)) {
-//         if (cookieKey.toLowerCase() === lowerKey) {
-//             console.log(`Found cookie: ${cookieKey}=${cookieValue}`);
-//             return cookieValue ? decodeURIComponent(cookieValue) : ''; // 👈 Giải mã giá trị cookie
-//         }
-//     }
-
-//     console.error(`Cookie "${key}" not found.`);
-//     return '';
-// };
 export const lambdaResponse = (
     value: any,
     statusCode: number,
@@ -185,11 +151,7 @@ export const tokensToCookies = (tokens?: AuthenticationResultType) => {
                 return;
             }
             cookies.push(
-                cookie.serialize(
-                    tokenName,
-                    tokenValue,
-                    options
-                )
+                cookie.serialize(tokenName, tokenValue, options)
             );
         });
 
@@ -200,6 +162,7 @@ export const tokensToCookies = (tokens?: AuthenticationResultType) => {
     }
     return cookies;
 };
+
 export const userProperties = (
     groups?: GroupType[],
     user?: GetUserCommandOutput,
@@ -222,14 +185,26 @@ export const userProperties = (
         username: user?.Username,
     };
 };
-export const isAdmin = (event: APIGatewayProxyEventV2) => {
-    const claims = (event.requestContext as any).authorizer as LambdaRequestContext;
+export const isAdmin = (event: APIGatewayProxyEventV2): boolean => {
+    // console.log('Authorizer Context:', JSON.stringify((event.requestContext as any).authorizer, null, 2));
+    // const claims = (event.requestContext as any).authorizer as LambdaRequestContext;
+    // const groups = claims?.lambda?.accessPayload?.['cognito:groups'] || [];
+    // console.log('User Groups:', groups);
+    // return groups.includes(constants.groups.admin);
+
+    // const claims = (event.requestContext as any).authorizer?.claims;
+    // return claims?.['cognito:groups']?.includes(constants.groups.admin) === true;
+
+
+    const claims = (event.requestContext as any).authorizer?.jwt.claims;
     return (
-        claims?.lambda.accessPayload['cognito:groups']?.includes(
-            constants.groups.admin,
-        ) === true
+        claims &&
+        typeof claims['cognito:groups'] === 'string' &&
+        claims['cognito:groups'].includes('admin_group')
     );
+
 };
+
 export const strLower = (str: string, capitalize = true) => {
     str = str.replace(/\s\s+/g, ' ').trim();
     if (capitalize) {
@@ -336,8 +311,11 @@ export const getCredentials = async (
     if (isAdmin(event)) {
         return 'Admin Rights';
     }
-    const key = `cognito-idp.${process.env.region}.amazonaws.com/${process.env.userPoolId}`;
+    const key = `cognito-idp.${poolData.region}.amazonaws.com/${poolData.userPoolId}`;
     const value = getCookieValue(event, 'IdToken'); // event.headers.authorization!;
+    if (!value) {
+        throw new Error('IdToken is missing');
+    }
     const credentials = new CognitoIdentityCredentials({
         IdentityPoolId: identityPoolId,
         Logins: {
@@ -438,7 +416,7 @@ const tokenParams = [
     'AccessToken',
     'IdToken',
     'RefreshToken',
-];
+] as const;
 export const supportedCategories = [
     'Grocery',
     'Electronics',

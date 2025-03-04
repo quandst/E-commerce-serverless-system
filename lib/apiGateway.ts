@@ -40,7 +40,7 @@ export class ApiGateway extends Construct {
       ],
       allowCredentials: true,
       allowOrigins: origins,
-      exposedHeaders: [
+      exposeHeaders: [
         "Set-Cookie", // 👈 Cho phép client nhận cookie từ response
       ],
     };

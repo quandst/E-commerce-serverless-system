@@ -1,6 +1,7 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResult } from 'aws-lambda';
 import {
-    CognitoIdentityProvider
+    CognitoIdentityProvider,
+    ExpiredCodeException
 } from '@aws-sdk/client-cognito-identity-provider';
 import { getCookieValue, lambdaResponse } from '../../lib/utils';
 import { poolData } from '../config';
@@ -22,15 +23,25 @@ export async function verify(
                 ...args,
                 Code: code,
             });
+            return { statusCode: 204, body: '' };
         } else {
             await provider.getUserAttributeVerificationCode(args);
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: 'New verification code sent' }),
+            };
         }
-
-        return {
-            body: '',
-            statusCode: 204,
-        };
     } catch (error) {
+        if (error instanceof ExpiredCodeException) {
+            return {
+                statusCode: 410, // HTTP Gone
+                body: JSON.stringify({
+                    error: 'EXPIRED_CODE',
+                    message: 'Code expired. Please request a new one',
+                    resendEndpoint: '/verify' // Guide client to resend
+                }),
+            };
+        }
         return lambdaResponse(error, 500);
     }
 }

@@ -1,8 +1,8 @@
 {
   "info": {
     "name": "E-Store API",
-    "_postman_id": "c329a860-d200-4023-8aa9-b3008b090393",
-    "description": "E-Store API based on the OpenAPI 3.0 specification.\n\nUseful links:\n- [E-Store repository](https://github.com/quandst/E-commerce-serverless-system)\n- [The source API definition](https://github.com/quandst/E-commerce-serverless-system/resources/api-definition.yml)\n",
+    "_postman_id": "2391d4b6-2ad5-4606-8e16-40331cd7c3ba",
+    "description": "E-Store API based on the OpenAPI 3.0 specification.\n\nUseful links:\n- [E-Store repository](https://github.com/quandst/E-commerce-serverless-system/tree/dev)\n- [The source API definition](https://github.com/quandst/E-commerce-serverless-system/blob/dev/resources/api-definition.yml)\n",
     "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
   },
   "item": [
@@ -11,7 +11,7 @@
       "description": "Access to user related endpoints",
       "item": [
         {
-          "id": "296344a1-29e9-494c-b077-f8fbc8872366",
+          "id": "15ce4f41-11ab-4814-a86a-1b4ac1360cef",
           "name": "Gets user attributes for the current authenticated user",
           "request": {
             "url": {
@@ -49,7 +49,7 @@
               "status": "Returns user attributes",
               "code": 200,
               "name": "Response_200",
-              "id": "024042bf-fc0e-44d9-ae27-c201c4628798"
+              "id": "33553fc3-359a-4f51-939b-f9ecb2b086fd"
             },
             {
               "header": [
@@ -63,12 +63,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "94098668-9bfb-4ad0-9619-9567ce8aa0bd"
+              "id": "a27b94a2-787b-4d41-9a93-6add4ac02ab5"
             }
           ]
         },
         {
-          "id": "02b67cd4-1f1b-4196-8893-145b59cf94d8",
+          "id": "903cc26b-608e-49e2-8351-cd760b88ba25",
           "name": "Register and returns the authentication cookie",
           "request": {
             "url": {
@@ -98,7 +98,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"email29\",\r\n  \"gender\": \"gender66\",\r\n  \"username\": \"username58\",\r\n  \"password\": \"password24\"\r\n}",
+              "raw": "{\r\n  \"email\": \"email43\",\r\n  \"gender\": \"gender95\",\r\n  \"username\": \"username48\",\r\n  \"password\": \"password79\"\r\n}",
               "disabled": false
             },
             "description": "This can only be done by an authenticated user."
@@ -121,7 +121,7 @@
               "status": "Successfully registers user.\n\nReturns user attributes and cookies that are to be included  in subsequent requests.",
               "code": 200,
               "name": "Response_200",
-              "id": "1fd0a3a0-1d0f-47f4-89b1-44ccb35f9f9c"
+              "id": "6f9c63b8-0749-4e9f-abe6-a4e9d6b51d0c"
             },
             {
               "header": [
@@ -135,12 +135,12 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "c91a7672-f947-4fc3-bf5e-1477001ae3d0"
+              "id": "09a53e43-5663-4528-a81f-95676ef26958"
             }
           ]
         },
         {
-          "id": "34b702a3-911a-4c2b-a9c7-fa98147b3d72",
+          "id": "f19d90c7-8b51-4c57-a2e1-27669b9aeecc",
           "name": "Logs in and returns the authentication cookie",
           "request": {
             "url": {
@@ -170,7 +170,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"identity\": \"identity29\",\r\n  \"password\": \"password66\"\r\n}",
+              "raw": "{\r\n  \"identity\": \"identity13\",\r\n  \"password\": \"password37\"\r\n}",
               "disabled": false
             },
             "description": ""
@@ -193,7 +193,7 @@
               "status": "Successfully authenticated.\n\nReturns user attributes and cookies that are to be included  in subsequent requests.",
               "code": 200,
               "name": "Response_200",
-              "id": "5e839dc0-6e2b-448f-a3a1-58ece569980e"
+              "id": "9fa37452-598a-4ab6-b8ad-98660f0bc30f"
             },
             {
               "header": [
@@ -207,7 +207,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "a66cae92-689d-47eb-819a-4dab38bcbdf8"
+              "id": "b3f562f1-6c9a-41b1-8a1c-d233f03ceffb"
             },
             {
               "header": [
@@ -221,12 +221,12 @@
               "status": "Password does not match corresponding username/email supplied",
               "code": 500,
               "name": "Response_500",
-              "id": "121f9814-2ad8-4b65-a829-2bb78a847f63"
+              "id": "3daebbef-dfe7-4713-a076-67ef8fb15793"
             }
           ]
         },
         {
-          "id": "7866a99c-e55a-4874-93de-b6c5231caed6",
+          "id": "55e6856d-6a22-47cc-b58c-b94e4d2b50dd",
           "name": "Logs out and deletes the authenticated cookie",
           "request": {
             "url": {
@@ -266,12 +266,12 @@
               "status": "Successfully logged out and clears cookie.\n\nReturns no content.",
               "code": 204,
               "name": "Response_204",
-              "id": "b9ccc199-439a-4a6b-88ab-7417eb88c3d0"
+              "id": "96399ac0-faf7-4b36-b1db-20eb4ed3fbd6"
             }
           ]
         },
         {
-          "id": "946e8b0e-43de-4584-8f19-427fce035a15",
+          "id": "c75976c1-99e4-4432-a928-3b8b67df0bc7",
           "name": "Sends or verifies user using code sent via email",
           "request": {
             "url": {
@@ -284,7 +284,7 @@
               "query": [
                 {
                   "key": "code",
-                  "value": "code29",
+                  "value": "code13",
                   "description": "Code sent to email",
                   "disabled": false
                 }
@@ -310,7 +310,7 @@
               "status": "Sends or verifies Code\n\nReturns no content.",
               "code": 204,
               "name": "Response_204",
-              "id": "26b3c707-653b-4f0a-a67b-83acd7aa5133"
+              "id": "286ab0f1-1797-4172-a067-fb4c407eb308"
             },
             {
               "header": [
@@ -324,7 +324,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "97a55e09-da2a-4769-9d04-fa6e70db5e09"
+              "id": "2b4cd0e4-984c-46bf-bc93-1d94240370c9"
             },
             {
               "header": [
@@ -338,12 +338,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "f6516f35-ffb6-4afb-bdfa-e8572f1fd99f"
+              "id": "30ce317a-1551-414f-8f03-2c8afc5fd4ed"
             }
           ]
         },
         {
-          "id": "125eee02-c274-45eb-9a6e-10de42a7f33f",
+          "id": "21533d59-ace9-4728-bea3-0fad83ba37c8",
           "name": "Refreshes tokens using refresh token from cookie",
           "request": {
             "url": {
@@ -386,7 +386,7 @@
               "status": "Successfully authenticated.\n\nReturns user attributes and cookies that are to be included  in subsequent requests.",
               "code": 200,
               "name": "Response_200",
-              "id": "e86fd207-fc53-4626-9c01-440673e42350"
+              "id": "25cd63b2-ad04-45d7-bf5c-4d13df98bca3"
             },
             {
               "header": [
@@ -400,7 +400,7 @@
               "status": "Refresh token is not supplied or is invalid",
               "code": 400,
               "name": "Response_400",
-              "id": "5c8c3e23-8e06-4a67-b8c2-5a3a7fd53401"
+              "id": "1c9e97ec-ddda-4347-8eb3-104ec28c5e0f"
             },
             {
               "header": [
@@ -414,7 +414,7 @@
               "status": "User is not authorized or invalid refresh token",
               "code": 500,
               "name": "Response_500",
-              "id": "00825c03-6019-4acc-a7c5-39ebfc73d130"
+              "id": "eee3580b-c77e-490a-8fea-c78509226d63"
             }
           ]
         }
@@ -425,7 +425,7 @@
       "description": "Access to product related endpoints",
       "item": [
         {
-          "id": "fc9e411d-38e3-4b7a-98f6-e50c89ab5fbf",
+          "id": "bc59ec8a-bc00-4312-ba5e-73f5f7a105b9",
           "name": "Gets supported product categories",
           "request": {
             "url": {
@@ -466,12 +466,12 @@
               "status": "Returns supported product categories",
               "code": 200,
               "name": "Response_200",
-              "id": "76a70490-30b0-412e-a64f-053bbe3b6eb5"
+              "id": "14e5959f-eda9-4b80-92f6-106718dff601"
             }
           ]
         },
         {
-          "id": "739df1ff-04e2-4d78-be64-f6e56db602a8",
+          "id": "5709b997-f83e-4c7c-8061-6099754fb758",
           "name": "Gets supported countries for delivery",
           "request": {
             "url": {
@@ -512,12 +512,12 @@
               "status": "Returns supported countries for delivery",
               "code": 200,
               "name": "Response_200",
-              "id": "6ef85bf1-42ba-487e-8eec-eae80c6d2ed7"
+              "id": "825e523b-cad3-4e43-94cb-6bddcc77dad0"
             }
           ]
         },
         {
-          "id": "93b88dbc-c22c-491e-af17-6ff57465df01",
+          "id": "63a25842-3d08-4510-9316-0df6fd29a0f8",
           "name": "Gets products",
           "request": {
             "url": {
@@ -542,7 +542,7 @@
                 },
                 {
                   "key": "search",
-                  "value": "search29",
+                  "value": "search13",
                   "description": "Finds products that starts with or contains a search pattern",
                   "disabled": false
                 },
@@ -573,7 +573,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"identity\": \"identity29\",\r\n  \"password\": \"password66\"\r\n}",
+              "raw": "{\r\n  \"identity\": \"identity13\",\r\n  \"password\": \"password37\"\r\n}",
               "disabled": false
             },
             "description": ""
@@ -591,7 +591,7 @@
               "status": "Returns products matching the query",
               "code": 200,
               "name": "Response_200",
-              "id": "cb455680-0342-4ddf-9fa0-90ce8704d0d5"
+              "id": "c29521b4-d8b4-4113-9ac5-ff3db02ef4f0"
             },
             {
               "header": [
@@ -605,12 +605,12 @@
               "status": "Limit supplied is invalid or not a number",
               "code": 400,
               "name": "Response_400",
-              "id": "63ee03cb-eaf5-46ab-bd45-18568053236d"
+              "id": "1c8596f1-5c48-442f-82a1-ecfce1765018"
             }
           ]
         },
         {
-          "id": "99e3b616-1be3-49f1-a165-ae4486c498f0",
+          "id": "0ceb64dc-7772-4001-8f83-13533c47d982",
           "name": "Creates a product",
           "request": {
             "url": {
@@ -655,7 +655,7 @@
               "status": "Returns product created",
               "code": 200,
               "name": "Response_200",
-              "id": "5cda0c99-48b9-44d1-aeb0-e7f69fc733b8"
+              "id": "95320e51-2af2-4f93-8f0e-74238b3657a1"
             },
             {
               "header": [
@@ -669,7 +669,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "925ead9b-ed65-4ac3-ab71-ccd943ff7479"
+              "id": "bfa6e727-184b-4f83-935a-979f866a41c8"
             },
             {
               "header": [
@@ -683,12 +683,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "fa11c965-a8cc-4f68-ab35-3f58d512803e"
+              "id": "84e40bd7-026e-4318-a28b-348727b406ec"
             }
           ]
         },
         {
-          "id": "f90ee4f6-5da4-4e4e-b61c-625f07b03aeb",
+          "id": "d09e02e9-dcba-4884-b1c3-38f1f84a8b72",
           "name": "getProduct",
           "request": {
             "url": {
@@ -702,7 +702,7 @@
                 {
                   "id": "id",
                   "key": "id",
-                  "value": "id29",
+                  "value": "id13",
                   "type": "string",
                   "description": "Product matching the specified id"
                 }
@@ -738,14 +738,14 @@
               "status": "Returns product with the specified id",
               "code": 200,
               "name": "Response_200",
-              "id": "bb24bdc6-0385-4e10-a64a-c88a19238a6c"
+              "id": "845e1c8f-597d-4227-8035-918edc59ada4"
             },
             {
               "header": [],
               "status": "Product not found.\n\nReturns no content.",
               "code": 204,
               "name": "Response_204",
-              "id": "c22dca93-376d-4f1a-acd5-277e49043730"
+              "id": "e7ef2193-c327-4227-add1-94947553b08a"
             },
             {
               "header": [
@@ -759,12 +759,12 @@
               "status": "Product id is not supplied or is invalid",
               "code": 400,
               "name": "Response_400",
-              "id": "2121081b-eec0-477c-9791-d2f4d4a7065e"
+              "id": "995ebeec-df8b-470a-85ca-0f77a95bf13d"
             }
           ]
         },
         {
-          "id": "a45c0be1-2654-44e7-9017-144d15646c44",
+          "id": "61e25358-0683-4d3a-908f-82a3cf360ee9",
           "name": "updateProduct",
           "request": {
             "url": {
@@ -778,7 +778,7 @@
                 {
                   "id": "id",
                   "key": "id",
-                  "value": "id29",
+                  "value": "id13",
                   "type": "string",
                   "description": "Product matching the specified id"
                 }
@@ -818,7 +818,7 @@
               "status": "Returns updated product with the specified id",
               "code": 200,
               "name": "Response_200",
-              "id": "d7b0d299-9471-49fa-9258-3962a7cdade8"
+              "id": "f4325892-f90f-4726-b476-5f882e0767e7"
             },
             {
               "header": [
@@ -832,7 +832,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "464edf55-1f00-41d7-9cf2-dd5a91e98d5c"
+              "id": "cc16132c-939c-4566-9231-dd28caef8173"
             },
             {
               "header": [
@@ -846,12 +846,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "36de0f26-7dfe-4ead-8632-9134acf10e08"
+              "id": "29acedec-9f1e-4d43-8b26-990b8169d94a"
             }
           ]
         },
         {
-          "id": "2071660f-157d-49b1-8015-1eacadfd72b0",
+          "id": "c5281765-858e-457d-8f00-fa2b6e3d2fef",
           "name": "deleteProduct",
           "request": {
             "url": {
@@ -865,7 +865,7 @@
                 {
                   "id": "id",
                   "key": "id",
-                  "value": "id68",
+                  "value": "id13",
                   "type": "string",
                   "description": "Product matching the specified id"
                 }
@@ -898,7 +898,7 @@
               "status": "Deletes product if it exists",
               "code": 200,
               "name": "Response_200",
-              "id": "596f2614-7289-42b9-b7a3-38f575eaf260"
+              "id": "3351e852-22d9-46ba-8496-0ca8e8316c13"
             },
             {
               "header": [
@@ -912,12 +912,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "e11a5fa3-ec7d-4127-a7b3-4d0bd5b01836"
+              "id": "104c37e0-0062-4729-acd2-90fabaf4fb3f"
             }
           ]
         },
         {
-          "id": "320c2370-a57a-466d-9e6b-01ad1d7c2fac",
+          "id": "31ada8d2-7df0-4683-b61d-a73545238a0a",
           "name": "getUploadUrl",
           "request": {
             "url": {
@@ -939,7 +939,7 @@
                 {
                   "id": "id",
                   "key": "id",
-                  "value": "id68",
+                  "value": "id13",
                   "type": "string",
                   "description": "Product matching the specified id"
                 }
@@ -979,7 +979,7 @@
               "status": "Returns upload url and keys",
               "code": 200,
               "name": "Response_200",
-              "id": "b3941e98-4e6a-4123-85b6-7d113589efb5"
+              "id": "b5e065ec-1225-485d-b4b7-bebda7ad94ef"
             },
             {
               "header": [
@@ -993,7 +993,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "7fe07d89-da52-4e1d-bdea-892a07f939d2"
+              "id": "b6767820-e9dc-498e-988a-9858eb1f09a1"
             },
             {
               "header": [
@@ -1007,12 +1007,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "066e1964-a2f6-47d3-93e8-ab87d74423c3"
+              "id": "79320b03-7f99-4fad-81b2-65e8f1c3d88e"
             }
           ]
         },
         {
-          "id": "6f4a933b-f8f6-494b-9ae9-08c055d58f78",
+          "id": "9fc59874-31e2-4fc7-8bed-e515039b88f5",
           "name": "deleteProductImage",
           "request": {
             "url": {
@@ -1034,7 +1034,7 @@
                 {
                   "id": "id",
                   "key": "id",
-                  "value": "id68",
+                  "value": "id13",
                   "type": "string",
                   "description": "Product matching the specified id"
                 }
@@ -1067,7 +1067,7 @@
               "status": "Deletes and update product image status",
               "code": 200,
               "name": "Response_200",
-              "id": "9d7111e0-fb9c-4225-9a4f-25ac66e38840"
+              "id": "efa2579e-b035-4ca4-b0ea-e93546e5e319"
             },
             {
               "header": [
@@ -1081,7 +1081,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "d7584f24-1297-4d78-ae98-ee84a6f87999"
+              "id": "96d083e7-74d8-41b3-91a3-a19e1adb7cf3"
             },
             {
               "header": [
@@ -1095,7 +1095,7 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "246a3bbc-4c3b-47cd-938c-af1a777a1b21"
+              "id": "da15653c-f9d9-4e04-b8c7-b7997343eed7"
             }
           ]
         }
@@ -1106,7 +1106,7 @@
       "description": "Access to orders related endpoints",
       "item": [
         {
-          "id": "2a4cc766-9b43-46db-82c5-66dee95d86f6",
+          "id": "19d5798f-afaa-45a5-bfd9-f67d76b09697",
           "name": "Gets orders",
           "request": {
             "url": {
@@ -1147,7 +1147,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"identity\": \"identity68\",\r\n  \"password\": \"password86\"\r\n}",
+              "raw": "{\r\n  \"identity\": \"identity13\",\r\n  \"password\": \"password37\"\r\n}",
               "disabled": false
             },
             "description": "This can only be done by an authenticated user."
@@ -1165,7 +1165,7 @@
               "status": "Returns orders",
               "code": 200,
               "name": "Response_200",
-              "id": "4b9b7673-e121-4e22-94a2-2ea98be0099d"
+              "id": "7cd93169-5828-4941-b69c-98202bd9b9b3"
             },
             {
               "header": [
@@ -1179,7 +1179,7 @@
               "status": "Limit supplied is invalid or not a number",
               "code": 400,
               "name": "Response_400",
-              "id": "7d04ed2e-ea5c-4838-bfb5-1f59c78252ae"
+              "id": "f15ef18b-eb5c-46a2-8735-9b16a8012252"
             },
             {
               "header": [
@@ -1193,12 +1193,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "0dde2182-0339-45dc-8f76-91c7ab44ba6a"
+              "id": "646c5f17-491a-4752-aae1-ce70edfbd170"
             }
           ]
         },
         {
-          "id": "b9363091-df68-407b-ac7a-bfde14150a42",
+          "id": "5791407a-4308-46ff-b28f-68c10638896f",
           "name": "createOrder",
           "request": {
             "url": {
@@ -1243,7 +1243,7 @@
               "status": "Returns order created",
               "code": 200,
               "name": "Response_200",
-              "id": "05586189-1e70-43d6-9d98-efce84e9b9ab"
+              "id": "780f3e60-e7a2-4df5-8364-4c08db436343"
             },
             {
               "header": [
@@ -1257,7 +1257,7 @@
               "status": "Order is not supplied or is invalid",
               "code": 400,
               "name": "Response_400",
-              "id": "79ac739a-7bd9-42c9-9732-40b098429b0f"
+              "id": "81883c4f-07db-47e1-9de1-8e8094653d4e"
             },
             {
               "header": [
@@ -1271,12 +1271,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "3a2bb93f-70ce-4cba-bc13-7732221688c1"
+              "id": "ff279772-6e43-4efd-9f64-484594ccc9c9"
             }
           ]
         },
         {
-          "id": "69883f2c-7bd8-4c2d-b20b-cfa9f8bea228",
+          "id": "ea7fe95a-9a24-453e-82a2-574989f04a7f",
           "name": "getOrder",
           "request": {
             "url": {
@@ -1330,7 +1330,7 @@
               "status": "Returns order with the specified intent",
               "code": 200,
               "name": "Response_200",
-              "id": "9c95509a-c500-47d0-8a49-d21eec3c6e15"
+              "id": "a4adcdad-1b8f-479c-bdd4-6fa610b724ba"
             },
             {
               "header": [
@@ -1344,7 +1344,7 @@
               "status": "Intent is not supplied or is invalid",
               "code": 400,
               "name": "Response_400",
-              "id": "62c19f83-b39e-4872-bcfd-026567307c6c"
+              "id": "c2f98445-1ffa-48c3-8604-c100b7166758"
             },
             {
               "header": [
@@ -1358,7 +1358,7 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "e31dc9b3-8d6b-4be6-b0b4-6ae3455cd9ce"
+              "id": "8b87707d-6431-43eb-81ac-2a02562fdac1"
             }
           ]
         }
@@ -1369,7 +1369,7 @@
       "description": "Access to payments related endpoints",
       "item": [
         {
-          "id": "c02ab3a9-fb48-4b11-afab-c74ef27df77b",
+          "id": "ffd1eed0-fd03-4a4f-9ca4-837877c57a3e",
           "name": "checkoutOrder",
           "request": {
             "url": {
@@ -1414,7 +1414,7 @@
               "status": "Returns client secret and amount for card payment",
               "code": 200,
               "name": "Response_200",
-              "id": "510c6b1a-8cc1-4e7e-bd44-36cd4df6002e"
+              "id": "4bb5dbfc-395e-47f1-91ad-3dfbebc30ba8"
             },
             {
               "header": [
@@ -1428,7 +1428,7 @@
               "status": "Order is not supplied or is invalid",
               "code": 400,
               "name": "Response_400",
-              "id": "ce9b7114-9f27-4606-9bc5-101a21c3c3bd"
+              "id": "3b44f1ac-cb1d-48a4-896a-18cd4055f00a"
             },
             {
               "header": [
@@ -1442,12 +1442,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "58b17942-b481-4724-a4af-98cc9f5dc7f0"
+              "id": "99b89247-8f66-473a-a781-caeec7ba83c1"
             }
           ]
         },
         {
-          "id": "8933201a-a281-4c74-bb0b-94e22ac5b102",
+          "id": "8ae4df92-8d4a-44bb-b834-8829a81c2c90",
           "name": "paymentHook",
           "request": {
             "url": {
@@ -1488,7 +1488,7 @@
               "status": "Returns payment update status",
               "code": 200,
               "name": "Response_200",
-              "id": "bb5b92f4-a8e7-4e0f-9d0e-2732efd76746"
+              "id": "ac18eb57-b472-48fb-af40-117403b34a2f"
             },
             {
               "header": [
@@ -1502,7 +1502,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "360ac98a-7458-464c-bd22-a258d9e03b57"
+              "id": "058e3b60-5160-47a4-b778-86cbf0420042"
             }
           ]
         }
@@ -1513,7 +1513,7 @@
       "description": "Access to managing users related endpoints",
       "item": [
         {
-          "id": "6008a5aa-e904-4767-922c-84ffce123cc7",
+          "id": "1ddbc560-ab41-482f-9c4b-4d943f9df730",
           "name": "Gets users",
           "request": {
             "url": {
@@ -1524,7 +1524,7 @@
                 "users"
               ]
             },
-            "method": "POST",
+            "method": "GET",
             "header": [
               {
                 "key": "Accept",
@@ -1551,7 +1551,7 @@
               "status": "Returns all users",
               "code": 200,
               "name": "Response_200",
-              "id": "e583d893-37d9-49eb-a40c-84f68ae2fc4d"
+              "id": "9a66bcf4-3357-4a44-a01f-b8f03277a072"
             },
             {
               "header": [
@@ -1565,12 +1565,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "ef6678cc-af28-45ce-b992-839874b3dbae"
+              "id": "333dba5d-143d-44e5-b1a6-8196c56014fe"
             }
           ]
         },
         {
-          "id": "0835f088-96a6-4af8-94ac-a8af7963b4dd",
+          "id": "df55973b-f0ae-4575-91f8-dd67c36e6bb3",
           "name": "addToGroup",
           "request": {
             "url": {
@@ -1625,7 +1625,7 @@
               "status": "Returns updated user group",
               "code": 200,
               "name": "Response_200",
-              "id": "fb3313e5-7716-41ef-84d1-d767fb77f0cf"
+              "id": "a93e93d4-e0e8-43ea-b2c7-f3774d94f468"
             },
             {
               "header": [
@@ -1639,7 +1639,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "38af9b4b-792f-4d04-b022-1880379d5928"
+              "id": "48460221-6959-447b-8ee4-069730c89118"
             },
             {
               "header": [
@@ -1653,12 +1653,12 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "d4c1b091-e5c8-44bd-8f34-07720a0a79ca"
+              "id": "041c44e8-433a-4718-bc09-1f2e20c3b6c6"
             }
           ]
         },
         {
-          "id": "beaf0f2e-6349-4f8e-9be7-1bba9ea8823a",
+          "id": "2cd034c2-52e4-425d-a341-f7c3147ba3ea",
           "name": "removeFromGroup",
           "request": {
             "url": {
@@ -1713,7 +1713,7 @@
               "status": "Returns updated user group",
               "code": 200,
               "name": "Response_200",
-              "id": "840a5f82-9030-4077-97f6-c0a1c98feacc"
+              "id": "157157cb-3469-43a2-af3d-c4fe13c8f8ff"
             },
             {
               "header": [
@@ -1727,7 +1727,7 @@
               "status": "",
               "code": 400,
               "name": "Response_400",
-              "id": "ed2147b4-7932-4cdb-8cc8-bc1e3a0bc6e6"
+              "id": "c08f85d8-7108-4a79-bc75-25cdec8c0596"
             },
             {
               "header": [
@@ -1741,7 +1741,7 @@
               "status": "User is not authorized",
               "code": 403,
               "name": "Response_403",
-              "id": "60d2fb60-51b2-48d7-82a1-8cef3169b19a"
+              "id": "5499803d-ed71-4a2e-a920-90e1a8b878d9"
             }
           ]
         }
