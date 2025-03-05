@@ -37,19 +37,23 @@ export async function userGroup(
             case HttpMethod.POST:
                 const { admin, product } = constants.groups;
                 if (groupname === admin) {
+                    console.log('Removing user from product group');
                     await provider.adminRemoveUserFromGroup({
                         ...params,
                         GroupName: product,
                     });
                 } else if (groupname === product) {
+                    console.log('Removing user from admin group');
                     await provider.adminRemoveUserFromGroup({
                         ...params,
                         GroupName: admin,
                     });
                 }
+                console.log('Adding user to group:', groupname);
                 await provider.adminAddUserToGroup(params);
                 break;
             case HttpMethod.DELETE:
+                console.log('Removing user from group:', groupname);
                 await provider.adminRemoveUserFromGroup(params);
                 result.group = '';
                 break;
@@ -61,6 +65,7 @@ export async function userGroup(
         }
         return lambdaResponse(result, 200);
     } catch (error) {
+        console.error('Cognito Error:', error);
         return lambdaResponse(error, 400);
     }
 }

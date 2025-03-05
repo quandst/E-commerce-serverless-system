@@ -186,22 +186,11 @@ export const userProperties = (
     };
 };
 export const isAdmin = (event: APIGatewayProxyEventV2): boolean => {
-    // console.log('Authorizer Context:', JSON.stringify((event.requestContext as any).authorizer, null, 2));
-    // const claims = (event.requestContext as any).authorizer as LambdaRequestContext;
-    // const groups = claims?.lambda?.accessPayload?.['cognito:groups'] || [];
-    // console.log('User Groups:', groups);
-    // return groups.includes(constants.groups.admin);
-
-    // const claims = (event.requestContext as any).authorizer?.claims;
-    // return claims?.['cognito:groups']?.includes(constants.groups.admin) === true;
-
-
-    const claims = (event.requestContext as any).authorizer?.jwt.claims;
-    return (
-        claims &&
-        typeof claims['cognito:groups'] === 'string' &&
-        claims['cognito:groups'].includes('admin_group')
-    );
+    console.log('Authorizer Context:', JSON.stringify((event.requestContext as any).authorizer, null, 2));
+    const authorizerContext = (event.requestContext as any).authorizer?.lambda;
+    const groups = authorizerContext?.idPayload?.['cognito:groups'] || [];
+    console.log('User Groups from Authorizer:', groups); // 👈 Log groups
+    return groups.includes(constants.groups.admin);
 
 };
 
@@ -418,16 +407,9 @@ const tokenParams = [
     'RefreshToken',
 ] as const;
 export const supportedCategories = [
-    'Grocery',
-    'Electronics',
-    'Health & Beauty',
-    'Automobile',
-    'Home & Kitchen',
-    'Phones & Tablets',
-    'Books',
-    'Gaming',
-    'Fashion',
-    'Sports & Outdoors',
+    'Dragonball',
+    'Naruto',
+    'One Piece'
 ];
 export enum PaymentStatus {
     CREATED,
@@ -453,90 +435,10 @@ export const supportedCountries: Country[] = [
             'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CN.svg',
     },
     {
-        code: 'JP',
-        name: 'Japan',
-        emoji: '🇯🇵',
-        unicode: 'U+1F1EF U+1F1F5',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/JP.svg',
-    },
-    {
-        code: 'DE',
-        name: 'Germany',
-        emoji: '🇩🇪',
-        unicode: 'U+1F1E9 U+1F1EA',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DE.svg',
-    },
-    {
-        code: 'GB',
-        name: 'United Kingdom',
-        emoji: '🇬🇧',
-        unicode: 'U+1F1EC U+1F1E7',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg',
-    },
-    {
-        code: 'IN',
-        name: 'India',
-        emoji: '🇮🇳',
-        unicode: 'U+1F1EE U+1F1F3',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IN.svg',
-    },
-    {
-        code: 'FR',
-        name: 'France',
-        emoji: '🇫🇷',
-        unicode: 'U+1F1EB U+1F1F7',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FR.svg',
-    },
-    {
         code: 'VN',
         name: 'Vietnam',
         emoji: '🇻🇳',
         unicode: 'U+1F1FB U+1F1F3',
         image: 'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VN.svg'
     },
-    {
-        code: 'BR',
-        name: 'Brazil',
-        emoji: '🇧🇷',
-        unicode: 'U+1F1E7 U+1F1F7',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BR.svg',
-    },
-    {
-        code: 'CA',
-        name: 'Canada',
-        emoji: '🇨🇦',
-        unicode: 'U+1F1E8 U+1F1E6',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CA.svg',
-    },
-    {
-        code: 'KR',
-        name: 'South Korea',
-        emoji: '🇰🇷',
-        unicode: 'U+1F1F0 U+1F1F7',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KR.svg',
-    },
-    {
-        code: 'RU',
-        name: 'Russia',
-        emoji: '🇷🇺',
-        unicode: 'U+1F1F7 U+1F1FA',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RU.svg',
-    },
-    {
-        code: 'AU',
-        name: 'Australia',
-        emoji: '🇦🇺',
-        unicode: 'U+1F1E6 U+1F1FA',
-        image:
-            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AU.svg',
-    }
 ];
