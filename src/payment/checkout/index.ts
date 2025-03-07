@@ -15,87 +15,68 @@ import {
     poolData
 
 } from '../../config';
-/**
- * Processes the payment checkout for a user's order.
- * @param event - The API Gateway proxy event.
- * @returns A promise resolving to an API Gateway proxy result containing the client secret and order amount.
- */
 export async function paymentCheckout(
     event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
+    // 👇 load stripe secret key
+    const config = await loadConfig('stripe-secret');
+    const stripe = Stripe(config.stripe_api_secret_key);
     try {
-        // Load Stripe secret key
-        const config = await loadConfig('stripe-secret');
-        if (!config || !config.stripe_api_secret_key) {
-            console.error('Stripe secret key not found.');
-            return lambdaResponse(
-                { error: 'Stripe configuration error.' },
-                500,
-            );
-        }
-        const stripe = Stripe(config.stripe_api_secret_key);
 
-        // Extract user information from authorizer
-        const claims = (event.requestContext as any).authorizer?.lambda as LambdaRequestContext;
-        const user = claims.lambda.accessPayload.username!;
-
+        const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
+        const user = claims.authorizer.lambda.accessPayload.username!;
         const ddbClient = new DynamoDBClient({ region: poolData.region });
         const { orderTable, cartIntent } = constants;
-
-        // Retrieve order from DynamoDB
         const { Item } = await ddbClient.send(
             new GetItemCommand({
                 TableName: orderTable,
                 Key: marshall({ user, intent: cartIntent }),
             }),
         );
-
-        // Check if order exists
+        // 👇 check if order is exists
         if (!Item) {
-            console.warn(`No order found for user ${user} with cart intent.`);
             return lambdaResponse({ name: 'NoOrderInCartException' }, 400);
         }
-
         const item = unmarshall(Item) as OrderTable;
-
-        // Check if order contains items
         if (!item.orders.length) {
-            console.warn(`Order for user ${user} has no items.`);
             return lambdaResponse({ name: 'NoOrderException' }, 400);
         }
-
-        // Validate delivery location
+        // 👇 check if delivery location is valid
         const requestBody = JSON.parse(event.body || '{}') as Partial<OrderTable>;
         if (
             !requestBody.location ||
             !requestBody.location.address ||
             !requestBody.location.country
         ) {
-            console.warn(`Invalid location provided for user ${user}.`);
             return lambdaResponse({ name: 'InvalidLocationException' }, 400);
         }
-
-        // Update order delivery details
+        // 👇 update order delivery details
         item.location = requestBody.location;
-
-        // Remove user and intent properties (not needed for update)
         delete (item as Partial<OrderTable>).user;
         delete (item as Partial<OrderTable>).intent;
+        try {
+            await UpdateItem(ddbClient, orderTable, item, { user, intent: cartIntent });
+        } catch (updateError) {
+            console.error("DynamoDB Update Failed:", updateError);
+            return lambdaResponse({
+                name: "DatabaseUpdateException",
+                message: "Failed to update order details"
+            }, 500);
+        }
 
-        // Update item in DynamoDB
-        await UpdateItem(ddbClient, orderTable, item, {
-            user,
-            intent: cartIntent,
-        });
-
-        const amount = item.amount * 100;
+        if (typeof item.amount !== "number" || isNaN(item.amount)) {
+            return lambdaResponse({
+                name: "InvalidAmountException",
+                message: "Order amount is not a valid number"
+            }, 400);
+        }
+        const amount = Math.round(item.amount * 100); // Avoid floating-point issues
         const date = new Date(item.createdAt).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
         });
-
-        // Create a PaymentIntent with the order amount and currency
+        // 👇 Create a PaymentIntent with the order amount and currency
         const createIntent = await stripe.paymentIntents.create({
             amount,
             currency: 'usd',
@@ -112,7 +93,14 @@ export async function paymentCheckout(
             200,
         );
     } catch (error) {
-        console.error('An error occurred during payment checkout:', error);
-        return lambdaResponse({ error: 'Payment checkout failed.' }, 500);
+        console.error("Full Error Details:", error); // Log the full error
+        if (error instanceof TypeError) {
+        }
+        const errorMessage = (error as Error).message || "Unknown error";
+        return lambdaResponse(
+            { message: "Payment failed", details: errorMessage }, // Include error message
+            500
+        );
     }
 }
+
