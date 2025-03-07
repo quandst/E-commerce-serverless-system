@@ -19,125 +19,104 @@ import {
 } from '../../lib/utils';
 import { poolData } from '../config';
 
-const { orderTable, readsPerQuery } = constants;
-
-/**
- * Retrieves orders from DynamoDB, optionally filtered by payment status.
- * @param ddbClient - DynamoDB client.
- * @param user - The user ID.
- * @param startKey - Optional key to start the query from.
- * @param limit - Maximum number of items to return.
- * @param category - Optional category to filter orders by (e.g., 'succeeded', 'requested', 'canceled').
- * @returns A promise resolving to a lambda response containing the orders.
- */
+// 👇 get orders
 const getOrders = async (
     ddbClient: DynamoDBClient,
     user: string,
     startKey: KeyValue<AttributeValue> | undefined,
     limit: number,
     category?: string,
-): Promise<APIGatewayProxyResult> => {
-    let filterExpression: string | undefined;
-    let expressionAttributeValues: Record<string, AttributeValue> = {
-        ':user': { S: user },
-        ':intent': { S: 'pi_' },
-    };
-    let expressionAttributeNames: Record<string, string> = {
+) => {
+    const filter =
+        category === 'succeeded'
+            ? {
+                key: '#status = :status1',
+                value1: `PAYMENT ${PaymentStatus[PaymentStatus.SUCCEEDED]}`,
+            }
+            : category === 'requested'
+                ? {
+                    key: '#status = :status1',
+                    value1: `PAYMENT ${PaymentStatus[PaymentStatus.CREATED]}`,
+                }
+                : category === 'canceled'
+                    ? {
+                        key: '#status = :status1 OR #status = :status2',
+                        value1: `PAYMENT ${PaymentStatus[PaymentStatus.FAILED]}`,
+                        value2: `PAYMENT ${PaymentStatus[PaymentStatus.CANCELED]}`,
+                    }
+                    : undefined;
+
+    const attributeNames = {
         '#user': 'user',
         '#intent': 'intent',
     };
+    const expressionAttributeNames =
+        filter && filter.value1
+            ? { '#status': 'status', ...attributeNames }
+            : attributeNames;
 
-    if (category) {
-        switch (category) {
-            case 'succeeded':
-                filterExpression = '#status = :status1';
-                expressionAttributeValues[':status1'] = {
-                    S: `PAYMENT ${PaymentStatus[PaymentStatus.SUCCEEDED]}`,
-                };
-                expressionAttributeNames['#status'] = 'status';
-                break;
-            case 'requested':
-                filterExpression = '#status = :status1';
-                expressionAttributeValues[':status1'] = {
-                    S: `PAYMENT ${PaymentStatus[PaymentStatus.CREATED]}`,
-                };
-                expressionAttributeNames['#status'] = 'status';
-                break;
-            case 'canceled':
-                filterExpression = '#status = :status1 OR #status = :status2';
-                expressionAttributeValues[':status1'] = {
-                    S: `PAYMENT ${PaymentStatus[PaymentStatus.FAILED]}`,
-                };
-                expressionAttributeValues[':status2'] = {
-                    S: `PAYMENT ${PaymentStatus[PaymentStatus.CANCELED]}`,
-                };
-                expressionAttributeNames['#status'] = 'status';
-                break;
-            default:
-                console.warn(`Invalid category: ${category}`);
-        }
-    }
+    const attributeValues = { ':user': { S: user }, ':intent': { S: 'pi_' } };
+    const expressionAttributeValues =
+        filter && filter.value1 && filter.value2
+            ? {
+                ':status1': { S: filter.value1 },
+                ':status2': { S: filter.value2 },
+                ...attributeValues,
+            }
+            : filter && filter.value1
+                ? {
+                    ':status1': { S: filter.value1 },
+                    ...attributeValues,
+                }
+                : attributeValues;
 
     const params: QueryCommandInput = {
-        TableName: orderTable,
+        TableName: constants.orderTable,
         KeyConditionExpression: '#user = :user AND begins_with(#intent, :intent)',
         ExpressionAttributeNames: expressionAttributeNames,
         ExpressionAttributeValues: expressionAttributeValues,
-        FilterExpression: filterExpression,
-        Limit: readsPerQuery,
+        FilterExpression: filter && filter.key,
+        Limit: constants.readsPerQuery,
         ExclusiveStartKey: startKey,
         ScanIndexForward: false,
     };
 
-    try {
-        const items = await queryItems(ddbClient, params, limit);
-        return lambdaResponse(items, 200);
-    } catch (error) {
-        console.error('Error retrieving orders:', error);
-        return lambdaResponse({ error: 'Failed to retrieve orders' }, 500);
-    }
+    return await queryItems(ddbClient, params, limit);
 };
 
-/**
- * Lambda function to retrieve orders.
- * @param event - API Gateway proxy event.
- * @returns A promise resolving to an API Gateway proxy result containing the orders.
- */
 export async function order(
     event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
     try {
-        // Extract user information from authorizer
-        const claims = (event.requestContext as any).authorizer as LambdaRequestContext;
-        const user = claims.lambda.accessPayload.username!;
+        /*
+        const claims = event.requestContext.authorizer?.jwt.claims;
+        if (!claims || claims["token_use"] !== "id") {
+            return lambdaResponse({ name: "IdTokenRequiredException" }, 400);
+        }
+        const user = claims["cognito:username"] as string;
+        */
+        const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
+        const user = claims.authorizer.lambda.accessPayload.username!;
         const ddbClient = new DynamoDBClient({ region: poolData.region });
 
-        // Parse request body
-        let requestBody: KeyValue<AttributeValue> | undefined;
-        try {
-            requestBody = event.body
-                ? (JSON.parse(event.body) as KeyValue<AttributeValue>)
-                : undefined;
-        } catch (error) {
-            console.warn('Invalid request body:', error);
-        }
-
+        const requestBody = JSON.parse(event.body || '{}');
         const params = event.queryStringParameters;
 
-        // Validate and parse limit parameter
+        // 👇 check if query should be limited
         const _limit = params?.limit;
         if (_limit && (!validIntNumber(_limit) || Number(_limit) === 0)) {
-            console.warn(`Invalid limit parameter: ${_limit}`);
             return lambdaResponse({ name: 'InvalidLimitException' }, 400);
         }
-        const limit = _limit ? Number(_limit) : readsPerQuery;
+        // 👇 check if pagination key is provided
+        const startKey = event.body
+            ? (requestBody as KeyValue<AttributeValue>)
+            : undefined;
+        const limit = _limit ? Number(_limit) : constants.readsPerQuery;
 
-        // Extract category parameter
+        // 👇 check if query should be filtered by category
         const category = params?.category;
-
-        return await getOrders(ddbClient, user, requestBody, limit, category);
+        return await getOrders(ddbClient, user, startKey, limit, category); // POST /order
     } catch (error) {
-        console.error('An unexpected error occurred:', error);
-        return lambdaResponse({ error: 'An unexpected error occurred.' }, 500);
+        return lambdaResponse(error, 500);
     }
 }

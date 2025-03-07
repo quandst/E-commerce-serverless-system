@@ -24,135 +24,102 @@ import {
 } from '../../../lib/utils';
 import { poolData } from '../../config';
 
-const { orderTable, cartIntent, orderLogs, cartStatus } = constants;
 
-/**
- * Creates or updates an order in DynamoDB.
- * @param ddbClient - DynamoDB client.
- * @param orders - Array of order items.
- * @param user - The user ID.
- * @returns A promise resolving to a lambda response containing the created or updated order.
- */
+// 👇 create order
 const createOrder = async (
     ddbClient: DynamoDBClient,
     orders: Orders[],
     user: string,
-): Promise<APIGatewayProxyResult> => {
-    try {
-        // Validate order input
-        if (!Array.isArray(orders)) {
-            console.warn('Invalid order format.');
-            return lambdaResponse({ name: 'InvalidOrderException' }, 400);
+) => {
+    // check if order is valid
+    if (!(orders instanceof Array))
+        return lambdaResponse({ name: 'InvalidOrderException' }, 400);
+
+    const { orderTable, cartIntent, orderLogs, cartStatus } = constants;
+
+    const createUpdate: Partial<OrderTable> = {
+        createdAt: Date.now(),
+        status: cartStatus,
+        logs: orderLogs,
+        orders: [],
+        amount: 0,
+    };
+
+    const ids: KeyValue<boolean> = {};
+    orders.forEach(({ productId, count }) => {
+        if (
+            // Remove order with invalid count
+            productId &&
+            count &&
+            validIntNumber(count.toString()) &&
+            count > 0
+        ) {
+            ids[productId] = true;
         }
+    });
+    const products = await getProductsById(Object.keys(ids), ddbClient);
+    // Add valid products to cart
+    orders.forEach(({ productId, count }) => {
+        const product = products[productId];
+        if (product) {
+            createUpdate.orders!.push({
+                slot: imageToSlot(product),
+                productId: product.id,
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                count,
+            });
+            createUpdate.amount! += count * product.price;
+        }
+    });
+    // Round to 2 decimal Places
+    createUpdate.amount =
+        Math.round((createUpdate.amount! + Number.EPSILON) * 100) / 100;
 
-        const createUpdate: Partial<OrderTable> = {
-            createdAt: Date.now(),
-            status: cartStatus,
-            logs: orderLogs,
-            orders: [],
-            amount: 0,
-        };
+    /*
+      if (createUpdate.orders!.length === 0)
+      return lambdaResponse({name: 'NoOrderAfterProcessingException'}, 400);
+    */
+    const { Item } = await ddbClient.send(
+        new GetItemCommand({
+            TableName: orderTable,
+            Key: marshall({ user, intent: cartIntent }),
+            AttributesToGet: ['intent'] as OrderTableKeys[],
+        }),
+    );
 
-        // Filter and validate product IDs from orders
-        const validProductIds: KeyValue<boolean> = {};
-        orders.forEach(({ productId, count }) => {
-            if (
-                productId &&
-                count &&
-                validIntNumber(count.toString()) &&
-                count > 0
-            ) {
-                validProductIds[productId] = true;
-            }
-        });
-
-        // Fetch valid products by IDs
-        const products = await getProductsById(
-            Object.keys(validProductIds),
-            ddbClient,
-        );
-
-        // Build order and calculate amount
-        orders.forEach(({ productId, count }) => {
-            const product = products[productId];
-            if (product) {
-                createUpdate.orders!.push({
-                    slot: imageToSlot(product),
-                    productId: product.id,
-                    name: product.name,
-                    category: product.category,
-                    price: product.price,
-                    count,
-                });
-                createUpdate.amount! += count * product.price;
-            }
-        });
-
-        // Round amount to 2 decimal places
-        createUpdate.amount =
-            Math.round((createUpdate.amount! + Number.EPSILON) * 100) / 100;
-
-        // Check if cart intent exists
-        const { Item } = await ddbClient.send(
-            new GetItemCommand({
+    if (!Item) {
+        createUpdate.user = user;
+        createUpdate.intent = cartIntent;
+        await ddbClient.send(
+            new PutItemCommand({
                 TableName: orderTable,
-                Key: marshall({ user, intent: cartIntent }),
-                AttributesToGet: ['intent'] as OrderTableKeys[],
+                Item: marshall(createUpdate),
             }),
         );
-
-        // Create or update order in DynamoDB
-        if (!Item) {
-            createUpdate.user = user;
-            createUpdate.intent = cartIntent;
-            await ddbClient.send(
-                new PutItemCommand({
-                    TableName: orderTable,
-                    Item: marshall(createUpdate),
-                }),
-            );
-        } else {
-            await UpdateItem(ddbClient, orderTable, createUpdate, {
-                user,
-                intent: cartIntent,
-            });
-            createUpdate.user = user;
-            createUpdate.intent = cartIntent;
-        }
-
-        return lambdaResponse(createUpdate, 200);
-    } catch (error) {
-        console.error('Error creating or updating order:', error);
-        return lambdaResponse({ error: 'Failed to create or update order' }, 500);
+    } else {
+        await UpdateItem(ddbClient, orderTable, createUpdate, {
+            user,
+            intent: cartIntent,
+        });
+        createUpdate.user = user;
+        createUpdate.intent = cartIntent;
     }
+    return lambdaResponse(createUpdate, 200);
 };
 
-/**
- * Lambda function to create an order.
- * @param event - API Gateway proxy event.
- * @returns A promise resolving to an API Gateway proxy result.
- */
 export async function orderCreate(
     event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
     try {
-        // Extract user information from authorizer
-        const claims = (event.requestContext as any).authorizer?.lambda as LambdaRequestContext;
-        const user = claims.lambda.accessPayload.username!;
-
-        // Parse request body
-        let requestBody: Orders[];
-        try {
-            requestBody = JSON.parse(event.body || '[]');
-        } catch (error) {
-            console.warn('Invalid request body:', error);
-            return lambdaResponse({ name: 'InvalidRequestBodyException' }, 400);
-        }
-
+        const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
+        const user = claims.authorizer.lambda.accessPayload.username!;
+        const requestBody: Orders[] = JSON.parse(event.body || '[]');
         const ddbClient = new DynamoDBClient({ region: poolData.region });
-        return await createOrder(ddbClient, requestBody, user);
+
+        return await createOrder(ddbClient, requestBody, user); // POST /order/create
     } catch (error) {
-        console.error('An unexpected error occurred:', error);
-        return lambdaResponse({ error: 'An unexpected error occurred.' }, 500);
+        return lambdaResponse(error, 500);
     }
 }
