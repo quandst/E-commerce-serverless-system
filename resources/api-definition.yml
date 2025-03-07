@@ -888,7 +888,7 @@ paths:
                     name: InvalidLocationException
         '403':
           $ref: '#/components/responses/Forbidden'
-  /payment/hook:
+  /payment/webhook:
     post:
       tags:
         - Payment

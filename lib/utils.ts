@@ -364,19 +364,28 @@ export const getProductsById = async (
 };
 export const stripe = (apiKey: string) => {
     const stripe = new Stripe(apiKey, {
-        apiVersion: '2025-01-27.acacia',
+        apiVersion: '2025-02-24.acacia',
         typescript: true,
     });
     return stripe;
 };
 export const loadConfig = async function (parameterName: string) {
     const ssm = new SSM();
-    const { Parameter } = await ssm
-        .getParameter({ Name: parameterName, WithDecryption: true })
-        .promise();
-    const value = Parameter?.Value;
-    if (!value) return '';
-    return JSON.parse(value);
+    try {
+        const { Parameter } = await ssm
+            .getParameter({ Name: parameterName, WithDecryption: true })
+            .promise();
+        const value = Parameter?.Value;
+        if (!value) throw new Error("Parameter not found");
+
+        // Log the raw value for debugging
+        console.log("Raw SSM value:", value);
+
+        return JSON.parse(value);
+    } catch (error) {
+        console.error("Failed to load config:", error);
+        throw error; // Re-throw to propagate the error
+    }
 };
 /*
 Constants

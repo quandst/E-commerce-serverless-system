@@ -32,8 +32,9 @@
     "aws-sdk": "^2.1692.0",
     "construct": "^1.0.0",
     "constructs": "^10.4.2",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
-    "stripe": "^17.6.0"
+    "stripe": "^17.7.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.147",

@@ -1455,7 +1455,7 @@
               "host": "api.e-store.store",
               "path": [
                 "v1",
-                "payment/hook"
+                "payment/webhook"
               ]
             },
             "auth": {
