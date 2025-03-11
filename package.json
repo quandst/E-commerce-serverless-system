@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest --config jest.config.ts",
+    "test": "jest --runInBand --detectOpenHandles --coverage",
     "cdk": "cdk --profile aws-cli-v2",
     "deploy": "cdk deploy --require-approval never --hotswap --outputs-file ./cdk-outputs.json"
   },
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/quandst/E-commerce-serverless-system#readme",
   "dependencies": {
+    "@aws-cdk/aws-apigatewayv2-alpha": "^2.114.1-alpha.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.744.0",
     "@aws-sdk/client-dynamodb": "^3.751.0",
     "@aws-sdk/client-s3": "^3.750.0",
@@ -37,8 +38,10 @@
     "stripe": "^17.7.0"
   },
   "devDependencies": {
+    "@aws-cdk/assert": "^2.68.0",
     "@types/aws-lambda": "^8.10.147",
     "@types/cookie": "^0.6.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.13.1",
     "@types/uuid": "^10.0.0",
     "aws-cdk": "^2.1000.2",
@@ -49,6 +52,7 @@
     "esbuild": "^0.25.0",
     "eslint": "^9.21.0",
     "jest": "^29.7.0",
+    "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }

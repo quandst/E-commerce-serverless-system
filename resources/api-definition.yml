@@ -722,7 +722,7 @@ paths:
                 name: InvalidOrderException
         '403':
           $ref: '#/components/responses/Forbidden'
-  /order/{intent}:
+  /order/{cart}:
     post:
       tags:
         - Order

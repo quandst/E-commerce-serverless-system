@@ -12,8 +12,6 @@ import { poolData } from '../config';
 
 export async function register(
     event: APIGatewayProxyEventV2,
-    // context?: Context,
-    // callback?: Callback,
 ): Promise<APIGatewayProxyResult & { cookies?: string[] }> {
 
     try {
@@ -105,16 +103,6 @@ export async function register(
         const cookies = tokensToCookies(tokens);
         console.log("Generated Cookies:", cookies);
 
-
-        // const responseHeaders = {
-        //     'Content-Type': 'application/json',
-        //     ...cookies.reduce((acc: { [key: string]: string }, cookie) => {
-        //         const [key, value] = cookie.split(': ');
-        //         acc[key] = value;
-        //         return acc;
-        //     }, {}),
-        // };
-
         return {
             ...lambdaResponse(
                 {
@@ -128,6 +116,5 @@ export async function register(
         };
     } catch (error) {
         return lambdaResponse(error, 500);
-        // return lambdaResponse({ error, event, context, callback }, 500);
     }
 }

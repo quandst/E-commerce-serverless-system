@@ -142,8 +142,7 @@ const getOrderByIntent = async (
                     item => item.productId === productId,
                 );
                 if (index >= 0) {
-                    const currentCount = cartOrder.orders[index].count;
-                    cartOrder.orders[index].count = Math.max(currentCount, count);
+                    cartOrder.orders[index].count = count;
                 } else {
                     cartOrder.orders.push({
                         slot: imageToSlot(product),
@@ -199,7 +198,8 @@ export async function orderIntent(
         const ddbClient = new DynamoDBClient({ region: poolData.region });
 
         // 👇 check if intent is valid
-        const intent = event.pathParameters?.intent;
+        const intent = event.pathParameters?.cart;
+        console.log('intent', intent);
         if (!intent) {
             return lambdaResponse({ name: `No Intent Specified` }, 400);
         }
@@ -210,3 +210,4 @@ export async function orderIntent(
         return lambdaResponse(error, 500);
     }
 }
+

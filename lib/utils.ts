@@ -120,6 +120,7 @@ export const lambdaResponse = (
         statusCode,
     } as APIGatewayProxyResult;
 };
+
 export const tokensToCookies = (tokens?: AuthenticationResultType) => {
     const cookies: string[] = [];
     const options: cookie.SerializeOptions = {
@@ -409,7 +410,7 @@ export const constants = {
 export const S3Constants = {
     productImages: `bucket-product-images-${uuidv4().replace(/-/g, '')}`,
 };
-const tokenDomain = '.e-store.store';
+export const tokenDomain = '.e-store.store';
 const tokenParams = [
     'AccessToken',
     'IdToken',
