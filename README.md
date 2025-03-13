@@ -33,12 +33,6 @@ This is a high-level view of how the different microservice interact with each o
   <img src="/resources/E-commerce high level architecture.jpg" height="400px" alt="High-level Architecture"/>
 </p>
 
-### CI/CD pipeline
-
-<p align="center">
-  <img src="/resources/CI_CD.jpg" height="200px" alt="CI/CD pipeline"/>
-</p>
-
 ---
 ### AWS Technologies used
 
@@ -65,10 +59,6 @@ __CI/CD__:
 
 * [AWS CloudFormation](https://aws.amazon.com/cloudformation/) with [AWS Serverless Application Model](https://aws.amazon.com/serverless/sam/) for defining AWS resources as code in most services.
 * [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) for defining AWS resources as code.
-* [Github](https://github.com/) for storing the project code.
-* [AWS CodePipeline](https://aws.amazon.com/codepipeline/) for orchestrating the pipeline.
-* [AWS CodeBuild](https://aws.amazon.com/codebuild/) for building and testing the application.
-* [AWS CodeDeploy](https://aws.amazon.com/codedeploy/) for deploying the application code.
 
 __Management__:
 
@@ -94,9 +84,9 @@ __Monitoring__:
 | product/{id} | Manages a product such creating, updating and deleting. |
 | order | Query/Search for orders. |
 | order/create | Manages an order such creating, updating and deleting. |
-| order/{intent} | Gets an order by intent such as `cart` or payment intent. |
+| order/{cart} | Gets an order by intent such as `cart` or payment intent. |
 | payment/checkout | Checkouts an order. |
-| payment/hook | Webhook for updating payment processing. |
+| payment/webhook | Webhook for updating payment processing. |
 | users | Gets users. |
 | user-group/{groupname} | Manages user groups such as adding and removing. |
 
@@ -159,6 +149,16 @@ npm run cdk -- deploy
 5. At the root directory, in **cdk-outputs.json** file, the API url can be found with the key `apiUrl`
 
 >Note: Make sure your [Stripe API secret key](https://stripe.com/docs/keys) and [Webhook secret](https://stripe.com/docs/webhooks/quickstart) are stored in [Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) with the parameter name `stripe-secret` and keys `stripe_api_secret_key` and `webhook_signing_secret` for webhooks to function properly.
+
+## Useful commands
+
+* `npm run build` compile typescript to js
+* `npm run watch` watch for changes and compile
+* `npm run test` perform the jest unit tests
+* `npm run cdk -- deploy` deploy this stack to your default AWS account/region
+* `npm run cdk -- diff` compare deployed stack with current state
+* `npm run cdk -- synth` emits the synthesized CloudFormation template
+* `npm run cdk -- destroy` deletes the CloudFormation stacks created by this project
 
 ## References
 > [Amazon Web Services | Cloud Computing Services](https://aws.amazon.com/)
