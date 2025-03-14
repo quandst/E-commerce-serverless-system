@@ -9,7 +9,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest --runInBand --detectOpenHandles --coverage",
-    "cdk": "cdk --profile aws-cli-v2",
+    "cdk": "cdk --profile aws-cli-v3",
     "deploy": "cdk deploy --require-approval never --hotswap --outputs-file ./cdk-outputs.json"
   },
   "repository": {

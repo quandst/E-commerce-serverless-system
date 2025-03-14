@@ -28,7 +28,6 @@ interface MicroserviceProps {
     amazonDynamoDBFullAccess: Role;
     amazonDynamoDBFullAccessWithSSMFullAccess: Role;
     amazonS3FullAccess: Role;
-    // authorizer: IHttpRouteAuthorizer;
 }
 
 export class Microservice extends Construct {
@@ -44,7 +43,6 @@ export class Microservice extends Construct {
             amazonDynamoDBFullAccessWithSSMFullAccess,
             amazonS3FullAccess,
             productBucket,
-            // authorizer,
         } = props;
 
         const apiVersion = 'v1';
@@ -61,12 +59,8 @@ export class Microservice extends Construct {
                 role,
                 entry: join(__dirname, `/../src/${entry}/index.ts`),
                 bundling: {
-                    // minify: true,
                     nodeModules: ['aws-sdk', ...(nodeModules || [])],
-                    // nodeModules,
-                    externalModules: [
-                        // 'aws-sdk', // Use the 'aws-sdk' available in the Lambda runtime
-                    ],
+                    externalModules: [],
                 },
                 environment,
             });
@@ -297,8 +291,6 @@ export class Microservice extends Construct {
         productBucket.addEventNotification(
             EventType.OBJECT_CREATED,
             new LambdaDestination(s3EventFunction),
-            // 👇 only invoke lambda if object matches the filter
-            // {prefix: 'test/', suffix: '.yaml'},
         );
     }
 }
