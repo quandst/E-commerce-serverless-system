@@ -18,8 +18,8 @@ export async function refresh(
     try {
         // 👇 check refresh token exists
         const refreshToken = getCookieValue(event, 'RefreshToken');
-        console.log("Event:", event);
-        console.log("Refresh Token:", refreshToken);
+        // console.log("Event:", event);
+        // console.log("Refresh Token:", refreshToken);
         if (!refreshToken)
             return lambdaResponse({ name: 'InvalidRefreshTokenException' }, 400);
 

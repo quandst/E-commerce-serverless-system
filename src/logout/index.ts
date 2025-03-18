@@ -31,7 +31,7 @@ export async function logout(
     // 👇 clear cookies on return
     const cookies = tokensToCookies();
     return {
-        body: '',
+        body: 'Log out successful',
         statusCode: 204,
         cookies,
     };

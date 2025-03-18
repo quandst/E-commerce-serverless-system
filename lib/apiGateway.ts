@@ -36,7 +36,6 @@ export class ApiGateway extends Construct {
         CorsHttpMethod.POST,
         CorsHttpMethod.PUT,
         CorsHttpMethod.DELETE,
-        CorsHttpMethod.OPTIONS,
       ],
       allowCredentials: true,
       allowOrigins: origins,

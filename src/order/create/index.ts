@@ -118,7 +118,7 @@ export async function orderCreate(
         const requestBody: Orders[] = JSON.parse(event.body || '[]');
         const ddbClient = new DynamoDBClient({ region: poolData.region });
 
-        return await createOrder(ddbClient, requestBody, user); // POST /order/create
+        return await createOrder(ddbClient, requestBody, user);
     } catch (error) {
         return lambdaResponse(error, 500);
     }

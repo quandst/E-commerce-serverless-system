@@ -8,8 +8,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest --runInBand --detectOpenHandles --coverage",
-    "cdk": "cdk --profile aws-cli-v3",
+    "test": "node --max-old-space-size=4096 ./node_modules/.bin/jest --runInBand --detectOpenHandles",
+    "cdk": "cdk --profile aws-cli-v4",
     "deploy": "cdk deploy --require-approval never --hotswap --outputs-file ./cdk-outputs.json"
   },
   "repository": {
@@ -27,15 +27,19 @@
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.114.1-alpha.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.744.0",
     "@aws-sdk/client-dynamodb": "^3.751.0",
+    "@aws-sdk/client-eventbridge": "^3.758.0",
     "@aws-sdk/client-s3": "^3.750.0",
     "@aws-sdk/client-ses": "^3.758.0",
     "@aws-sdk/util-dynamodb": "^3.744.0",
-    "aws-cdk-lib": "^2.180.0",
+    "@types/joi": "^17.2.2",
+    "aws-cdk-lib": "^2.184.1",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.8.3",
     "construct": "^1.0.0",
     "constructs": "^10.4.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
+    "joi": "^17.13.3",
     "stripe": "^17.7.0"
   },
   "devDependencies": {

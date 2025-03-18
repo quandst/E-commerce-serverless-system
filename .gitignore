@@ -34,3 +34,5 @@ env.ts
 
 cdk-outputs.json
 cdk.context.json
+
+generate-signature.js

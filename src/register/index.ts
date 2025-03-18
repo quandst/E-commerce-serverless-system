@@ -6,13 +6,17 @@
 //     CognitoIdentityProvider,
 //     SignUpCommandInput,
 // } from '@aws-sdk/client-cognito-identity-provider';
+// import { SES, SendEmailCommand } from '@aws-sdk/client-ses'; // Import SES and SendEmailCommand
 // import { validate } from 'email-validator';
 // import { lambdaResponse, tokensToCookies, userProperties } from '../../lib/utils';
-// import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 // import { poolData } from '../config';
+
+// // Initialize SES client
+// const ses = new SES({ region: poolData.region });
 
 // export async function register(
 //     event: APIGatewayProxyEventV2,
+
 // ): Promise<APIGatewayProxyResult & { cookies?: string[] }> {
 
 //     try {
@@ -75,39 +79,15 @@
 //             return lambdaResponse({ name: 'EmailExistsException' }, 400);
 //         }
 
-//         console.log("Calling Cognito SignUp...");
+//         // console.log("Calling Cognito SignUp...");
 //         await provider.signUp(signUpParams);
-//         console.log("SignUp successful");
+//         // console.log("SignUp successful");
 
-//         console.log("Calling AdminConfirmSignUp...");
+//         // console.log("Calling AdminConfirmSignUp...");
 //         await provider.adminConfirmSignUp(confirmParams);
-//         console.log("User confirmed");
+//         // console.log("User confirmed");
 
-//         // 👇 Send confirmation email using SES
-//         const sesClient = new SESClient({ region: poolData.region });
-//         const sendEmailCommand = new SendEmailCommand({
-//             Source: 'your-verified-email@example.com', // Replace with your verified SES email
-//             Destination: {
-//                 ToAddresses: [email],
-//             },
-//             Message: {
-//                 Subject: {
-//                     Data: 'Welcome to Our Service',
-//                 },
-//                 Body: {
-//                     Text: {
-//                         Data: `Thank you for registering, ${username}! Your account has been successfully created.`,
-//                     },
-//                 },
-//             },
-//         });
-
-//         console.log("Sending confirmation email...");
-//         await sesClient.send(sendEmailCommand);
-//         console.log("Confirmation email sent");
-
-
-//         console.log("Initiating Auth...");
+//         // console.log("Initiating Auth...");
 //         const authResponse = await provider.adminInitiateAuth({
 //             UserPoolId: poolData.userPoolId,
 //             ClientId: poolData.userPoolClientId,
@@ -117,7 +97,7 @@
 //                 PASSWORD: password,
 //             },
 //         });
-//         console.log("Auth Response:", authResponse);
+//         // console.log("Auth Response:", authResponse);
 
 //         const tokens = authResponse.AuthenticationResult;
 //         if (!tokens) {
@@ -126,7 +106,34 @@
 
 //         // 👇 convert token to cookies
 //         const cookies = tokensToCookies(tokens);
-//         console.log("Generated Cookies:", cookies);
+//         // console.log("Generated Cookies:", cookies);
+
+//         // Send confirmation email using SES
+//         const sendEmailParams = {
+//             Destination: {
+//                 ToAddresses: [email],
+//             },
+//             Message: {
+//                 Body: {
+//                     Text: {
+//                         Data: `Xin chào ${username},\n\nBạn đã đăng ký thành công tài khoản của mình.`,
+//                     },
+//                 },
+//                 Subject: {
+//                     Data: 'Đăng ký tài khoản thành công',
+//                 },
+//             },
+//             Source: 'naquan1309@gmail.com',
+//         };
+
+//         try {
+//             console.log("Sending email using SES...");
+//             await ses.send(new SendEmailCommand(sendEmailParams));
+//             console.log("Email sent successfully");
+//         } catch (sesError) {
+//             console.error("Error sending email:", sesError);
+//             // Handle SES error (e.g., log, return an error response)
+//         }
 
 //         return {
 //             ...lambdaResponse(
@@ -151,135 +158,50 @@ import {
     CognitoIdentityProvider,
     SignUpCommandInput,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { SES, SendEmailCommand } from '@aws-sdk/client-ses'; // Import SES and SendEmailCommand
+// import { SES, SendEmailCommand } from '@aws-sdk/client-ses';
 import { validate } from 'email-validator';
 import { lambdaResponse, tokensToCookies, userProperties } from '../../lib/utils';
 import { poolData } from '../config';
 
-// Initialize SES client
-const ses = new SES({ region: poolData.region });
+// Initialize SES and Cognito clients
+// const ses = new SES({ region: poolData.region });
+const cognitoProvider = new CognitoIdentityProvider({ region: poolData.region });
 
 export async function register(
     event: APIGatewayProxyEventV2,
-    // context?: Context,
-    // callback?: Callback,
 ): Promise<APIGatewayProxyResult & { cookies?: string[] }> {
-
     try {
         const body = JSON.parse(event.body || '{}');
 
-        // 👇 check credentials validity
-        if (!body.username) {
-            return lambdaResponse({ name: 'UsernameInvalidException' }, 400);
+        // Validate input
+        const { username, email, password, gender } = validateInput(body);
+        if (!username || !email || !password || !gender) {
+            return lambdaResponse({ name: 'InvalidInputException' }, 400);
         }
-        const username = (body.username as string).trim().toLowerCase();
-        if (username.length < 3 || username.includes(' ')) {
-            return lambdaResponse({ name: 'UsernameInvalidException' }, 400);
-        }
-        if (validate(username)) {
-            return lambdaResponse({ name: 'UsernameIsEmailException' }, 400);
-        }
-        if (!validate(body?.email)) {
-            return lambdaResponse({ name: 'EmailInvalidException' }, 400);
-        }
-        if (
-            !body.gender ||
-            (!(body.gender as string).match(/^male$/i) &&
-                !(body.gender as string).match(/^female$/i))
-        ) {
-            return lambdaResponse({ name: 'GenderInvalidException' }, 400);
-        }
-        const { email } = body;
-        const { password } = body;
-        const gender = (body.gender as string).trim().toLowerCase();
 
-        const signUpParams: SignUpCommandInput = {
-            ClientId: poolData.userPoolClientId,
-            Username: username,
-            Password: password,
-            UserAttributes: [
-                {
-                    Name: 'email',
-                    Value: email,
-                },
-                {
-                    Name: 'gender',
-                    Value: gender,
-                },
-            ],
-        };
-        const confirmParams = {
-            UserPoolId: poolData.userPoolId,
-            Username: username,
-        };
-        const provider = new CognitoIdentityProvider({ region: poolData.region });
-
-        // 👇 check if username already exists
-        const users = await provider.listUsers({
-            UserPoolId: poolData.userPoolId,
-            AttributesToGet: ['email'],
-            Filter: `email="${email}"`,
-        });
-
-        if (users.Users!.length > 0) {
+        // Check if email already exists
+        const emailExists = await checkEmailExists(email);
+        if (emailExists) {
             return lambdaResponse({ name: 'EmailExistsException' }, 400);
         }
 
-        console.log("Calling Cognito SignUp...");
-        await provider.signUp(signUpParams);
-        console.log("SignUp successful");
+        // Register user in Cognito
+        await registerUser(username, email, password, gender);
 
-        console.log("Calling AdminConfirmSignUp...");
-        await provider.adminConfirmSignUp(confirmParams);
-        console.log("User confirmed");
+        // Confirm user registration
+        await confirmUserRegistration(username);
 
-        console.log("Initiating Auth...");
-        const authResponse = await provider.adminInitiateAuth({
-            UserPoolId: poolData.userPoolId,
-            ClientId: poolData.userPoolClientId,
-            AuthFlow: 'ADMIN_NO_SRP_AUTH',
-            AuthParameters: {
-                USERNAME: username,
-                PASSWORD: password,
-            },
-        });
-        console.log("Auth Response:", authResponse);
-
-        const tokens = authResponse.AuthenticationResult;
+        // Authenticate user
+        const tokens = await authenticateUser(username, password);
         if (!tokens) {
-            throw new Error("AuthenticationResult is undefined");
+            throw new Error('Authentication failed');
         }
 
-        // 👇 convert token to cookies
+        // Convert tokens to cookies
         const cookies = tokensToCookies(tokens);
-        console.log("Generated Cookies:", cookies);
 
-        // Send confirmation email using SES
-        const sendEmailParams = {
-            Destination: {
-                ToAddresses: [email],
-            },
-            Message: {
-                Body: {
-                    Text: {
-                        Data: `Xin chào ${username},\n\nBạn đã đăng ký thành công tài khoản của mình.`,
-                    },
-                },
-                Subject: {
-                    Data: 'Đăng ký tài khoản thành công',
-                },
-            },
-            Source: 'naquan1309@gmail.com', // Thay thế bằng email đã xác minh của bạn
-        };
-
-        try {
-            console.log("Sending email using SES...");
-            await ses.send(new SendEmailCommand(sendEmailParams));
-            console.log("Email sent successfully");
-        } catch (sesError) {
-            console.error("Error sending email:", sesError);
-            // Handle SES error (e.g., log, return an error response)
-        }
+        // Send confirmation email
+        // await sendConfirmationEmail(email, username);
 
         return {
             ...lambdaResponse(
@@ -293,6 +215,99 @@ export async function register(
             cookies,
         };
     } catch (error) {
+        console.error('Error in register function:', error);
         return lambdaResponse(error, 500);
     }
 }
+
+// Helper function to validate input
+function validateInput(body: any) {
+    const username = (body.username as string)?.trim().toLowerCase();
+    const email = body.email;
+    const password = body.password;
+    const gender = (body.gender as string)?.trim().toLowerCase();
+
+    if (!username || username.length < 3 || username.includes(' ')) {
+        throw { name: 'UsernameInvalidException' };
+    }
+    if (validate(username)) {
+        throw { name: 'UsernameIsEmailException' };
+    }
+    if (!validate(email)) {
+        throw { name: 'EmailInvalidException' };
+    }
+    if (!gender || !['male', 'female'].includes(gender)) {
+        throw { name: 'GenderInvalidException' };
+    }
+
+    return { username, email, password, gender };
+}
+
+// Helper function to check if email already exists
+async function checkEmailExists(email: string): Promise<boolean> {
+    const users = await cognitoProvider.listUsers({
+        UserPoolId: poolData.userPoolId,
+        AttributesToGet: ['email'],
+        Filter: `email="${email}"`,
+    });
+    return users.Users!.length > 0;
+}
+
+// Helper function to register user in Cognito
+async function registerUser(username: string, email: string, password: string, gender: string) {
+    const signUpParams: SignUpCommandInput = {
+        ClientId: poolData.userPoolClientId,
+        Username: username,
+        Password: password,
+        UserAttributes: [
+            { Name: 'email', Value: email },
+            { Name: 'gender', Value: gender },
+        ],
+    };
+    await cognitoProvider.signUp(signUpParams);
+}
+
+// Helper function to confirm user registration
+async function confirmUserRegistration(username: string) {
+    await cognitoProvider.adminConfirmSignUp({
+        UserPoolId: poolData.userPoolId,
+        Username: username,
+    });
+}
+
+// Helper function to authenticate user
+async function authenticateUser(username: string, password: string) {
+    const authResponse = await cognitoProvider.adminInitiateAuth({
+        UserPoolId: poolData.userPoolId,
+        ClientId: poolData.userPoolClientId,
+        AuthFlow: 'ADMIN_NO_SRP_AUTH',
+        AuthParameters: {
+            USERNAME: username,
+            PASSWORD: password,
+        },
+    });
+    return authResponse.AuthenticationResult;
+}
+
+// Helper function to send confirmation email
+// async function sendConfirmationEmail(email: string, username: string) {
+//     const sendEmailParams = {
+//         Destination: { ToAddresses: [email] },
+//         Message: {
+//             Body: {
+//                 Text: {
+//                     Data: `Xin chào ${username},\n\nBạn đã đăng ký thành công tài khoản của mình.`,
+//                 },
+//             },
+//             Subject: { Data: 'Đăng ký tài khoản thành công' },
+//         },
+//         Source: 'naquan1309@gmail.com',
+//     };
+
+//     try {
+//         await ses.send(new SendEmailCommand(sendEmailParams));
+//     } catch (sesError) {
+//         console.error('Error sending email:', sesError);
+//         throw sesError;
+//     }
+// }

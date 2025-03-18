@@ -199,13 +199,13 @@ export async function orderIntent(
 
         // 👇 check if intent is valid
         const intent = event.pathParameters?.cart;
-        console.log('intent', intent);
+        // console.log('intent', intent);
         if (!intent) {
             return lambdaResponse({ name: `No Intent Specified` }, 400);
         }
 
         const requestBody: Orders[] = JSON.parse(event.body || '[]');
-        return getOrderByIntent(ddbClient, user, intent, requestBody); // POST /order/{intent}
+        return getOrderByIntent(ddbClient, user, intent, requestBody);
     } catch (error) {
         return lambdaResponse(error, 500);
     }

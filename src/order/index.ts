@@ -115,7 +115,7 @@ export async function order(
 
         // 👇 check if query should be filtered by category
         const category = params?.category;
-        return await getOrders(ddbClient, user, startKey, limit, category); // POST /order
+        return await getOrders(ddbClient, user, startKey, limit, category);
     } catch (error) {
         return lambdaResponse(error, 500);
     }

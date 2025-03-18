@@ -19,7 +19,7 @@ import { poolData } from '../../../config';
 
 const { productImages } = S3Constants;
 
-// 👇 Get the form fields and target URL for direct POST uploading.
+//  Get the form fields and target URL for direct POST uploading.
 export function createPresignedPost(
     filePath: string,
     fileType: string,
@@ -32,12 +32,12 @@ export function createPresignedPost(
             'Content-Type': fileType,
         },
         Conditions: [
-            // 👇 content length restrictions: 0-1MB]
+            //  content length restrictions: 0-1MB]
             ['content-length-range', 0, 1000000],
             // specify content-type to be more generic- images only
             // ["starts-with", "$Content-Type", "image/"],
         ],
-        // 👇 number of seconds for which the presigned policy should be valid
+        //  number of seconds for which the presigned policy should be valid
         Expires: 300, // 5mins
     };
 
@@ -49,7 +49,7 @@ export async function productImage(
     event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
     try {
-        // 👇 check if user is authorized to delete or update product
+        //  check if user is authorized to delete or update product
         await getCredentials(
             process.env[`${constants.groups.product}_pool`]!,
             event,
@@ -57,11 +57,11 @@ export async function productImage(
 
         const requestBody = JSON.parse(event.body || '{}');
         const productId = event.pathParameters?.id;
-        // 👇 check if productId is valid
+        //  check if productId is valid
         if (!productId)
             return lambdaResponse({ name: 'InvalidProductIdException' }, 400);
 
-        // 👇 check if image slot is valid
+        //  check if image slot is valid
         const slot = parseInt(event.queryStringParameters?.slot || '');
         if (slot !== 1 && slot !== 2 && slot !== 3)
             return lambdaResponse({ name: 'InvalidSlotException' }, 400);
@@ -74,7 +74,7 @@ export async function productImage(
                 Key: marshall({ id: productId }),
             }),
         );
-        // 👇 check if product exist
+        //  check if product exist
         if (!Item) return lambdaResponse({ name: 'NoProductWithIdException' }, 400);
 
         const filePath = `${productId}/${slot}`; // + "." + fileType.substring(6);
@@ -82,7 +82,7 @@ export async function productImage(
         const method = event.requestContext.http.method as HttpMethod;
         switch (method) {
             case HttpMethod.POST:
-                // 👇 check if image fileType is an image file
+                //  check if image fileType is an image file
                 const fileType = (requestBody.fileType || '') as string;
                 if (
                     !fileType ||
@@ -94,18 +94,18 @@ export async function productImage(
                 const presignedPost = await createPresignedPost(filePath, fileType);
                 return lambdaResponse(presignedPost, 200);
             case HttpMethod.DELETE:
-                // 👇 set image to invalid
+                //  set image to invalid
                 const productUpdate: Partial<ProductTable> = {
                     [`image_${slot}`]: false,
                 };
-                // 👇 update product image
+                //  update product image
                 const updateResult = await UpdateItem(
                     ddbClient,
                     productTable,
                     productUpdate,
                     { id: productId },
                 );
-                // 👇 delete image from  s3 bucket
+                //  delete image from  s3 bucket
                 const s3 = new S3();
                 const deleteResult = await s3
                     .deleteObject({

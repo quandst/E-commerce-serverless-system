@@ -98,27 +98,7 @@ export class UserGroups extends Construct {
             });
             group.applyRemovalPolicy(RemovalPolicy.DESTROY);
         };
-        /*
-        const createGroupWithIdentity = (
-          groupName: string,
-          roleNewLogicalId: string,
-          inlinePolicies: KeyValue<PolicyDocument>,
-          description?: string,
-        ) => {
-          const identityPool = createIdentityPool(groupName + '_pool');
-          const roleWithPolicy = createRoleWithPolicy(
-            groupName + '_role',
-            roleNewLogicalId + 'Role',
-            inlinePolicies,
-            identityPool,
-          );
-          createGroupWithRole(
-            groupName + '_group',
-            roleWithPolicy.roleArn,
-            description,
-          );
-        };
-    */
+
         const {
             productTable,
             groups: { admin, product },

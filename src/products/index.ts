@@ -20,7 +20,7 @@ import {
 import { poolData } from '../config';
 const { productTable, categoryIndex, readsPerQuery } = constants;
 
-// 👇 get all products
+//  get all products
 const getAllProducts = async (
     ddbClient: DynamoDBClient,
     search: string,
@@ -48,7 +48,7 @@ const getAllProducts = async (
 
     return await queryItems(ddbClient, params, limit, false);
 };
-// 👇 get products by category
+//  get products by category
 const getProductsByCategory = async (
     ddbClient: DynamoDBClient,
     category: string,
@@ -95,17 +95,17 @@ export async function products(
         const ddbClient = new DynamoDBClient({ region: poolData.region });
         const params = event.queryStringParameters;
 
-        // 👇 check if query should be limited
+        //  check if query should be limited
         const _limit = params?.limit;
         if (_limit && (!validIntNumber(_limit) || Number(_limit) === 0)) {
             return lambdaResponse({ name: 'InvalidLimitException' }, 400);
         }
-        // 👇 check if pagination key is provided
+        //  check if pagination key is provided
         const startKey = event.body
             ? (requestBody as KeyValue<AttributeValue>)
             : undefined;
         const limit = _limit ? Number(_limit) : readsPerQuery;
-        // 👇 check if query should be filtered by category
+        //  check if query should be filtered by category
         const category = strLower(params?.category || '');
         const search = strLower(params?.search || '');
         if (category) {
