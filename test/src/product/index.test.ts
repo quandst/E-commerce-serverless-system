@@ -14,6 +14,9 @@ const mockConstants = {
     category: supportedCategories[0],
     createdAt: 123,
     id: '1',
+    image_1: false,
+    image_2: false,
+    image_3: false,
     price: 100,
     name: 'Iphone',
   },
@@ -132,7 +135,7 @@ describe('Product Service', () => {
     expect(mockConstants.sendSpy).toHaveBeenCalledTimes(0);
 
     mEvent.body = JSON.stringify({
-      name: 'Samsung',
+      name: 'Goku',
       category: 'Category',
     });
 
@@ -144,7 +147,7 @@ describe('Product Service', () => {
     expect(mockConstants.sendSpy).toHaveBeenCalledTimes(0);
 
     mEvent.body = JSON.stringify({
-      name: 'Samsung',
+      name: 'Goku',
       category: supportedCategories[0],
       price: '.',
     });

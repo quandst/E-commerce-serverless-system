@@ -4,9 +4,9 @@ import { config } from 'dotenv';
 config();
 
 // Gán các giá trị từ process.env vào các biến môi trường cần thiết
-process.env.region = process.env.region || 'us-east-1';
-process.env.userPoolId = process.env.userPoolId || 'us-east-1_ODRaa1M8z';
-process.env.userPoolClientId = process.env.userPoolClientId || '3ucoc78hcjq8m2iosv7cm3smo6';
+process.env.region = 'us-east-1';
+process.env.userPoolId = 'us-east-1_9D4MK1Cno';
+process.env.userPoolClientId = 'nlo7qjfe42m9pg7gdlqjecjlt';
 
 // Export một object rỗng để đảm bảo file này được coi là module
 export { };

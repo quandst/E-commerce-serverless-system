@@ -7,7 +7,7 @@ import {
 import '@aws-cdk/assert/jest';
 import { Capture, Template } from 'aws-cdk-lib/assertions';
 import { App } from 'aws-cdk-lib';
-import { HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
+import { HttpMethod } from 'aws-cdk-lib/aws-apigatewayv2';
 import { constants, origins, S3Constants } from '../../lib/utils';
 import { CdkStack } from '../../lib';
 
@@ -289,6 +289,9 @@ describe('CDK Resources', () => {
                     ],
                     AllowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
                     AllowOrigins: origins,
+                    ExposeHeaders: [
+                        "Set-Cookie",
+                    ],
                 },
                 Name: apiName,
                 ProtocolType: 'HTTP',

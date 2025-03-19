@@ -198,7 +198,7 @@ const updatePaymentStatus = async function (status: PaymentStatus, session: Sess
             TransactItems: [{ Delete: { TableName: orderTable, Key: key, }, }, { Put: { TableName: orderTable, Item: marshall(theItem), }, },],
         };
         await ddbClient.send(new TransactWriteItemsCommand(params));
-        return lambdaResponse({ message: 'DynamoDB updated' }, 200);
+        return lambdaResponse({ message: 'DynamoDB updated for CREATED status' }, 200);
     }
 
     const params: UpdateItemCommandInput = {
@@ -212,7 +212,8 @@ const updatePaymentStatus = async function (status: PaymentStatus, session: Sess
         },
     };
     await ddbClient.send(new UpdateItemCommand(params));
-    return lambdaResponse({ message: 'DynamoDB updated' }, 200);
+
+    return lambdaResponse({ message: `DynamoDB updated ${PaymentStatus[status]} status` }, 200);
 };
 
 export async function paymentHook(event: APIGatewayProxyEventV2 | any): Promise<APIGatewayProxyResult | any> {

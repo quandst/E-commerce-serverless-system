@@ -14,12 +14,12 @@ export const cookieValue = [
 ];
 
 export const cookieData = [
-    `AccessToken=AccessToken; Max-Age=86400; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-    `IdToken=IdToken; Max-Age=86400; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-    `RefreshToken=RefreshToken; Max-Age=86400; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+    `AccessToken=AccessToken; Max-Age=86400; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=None`,
+    `IdToken=IdToken; Max-Age=86400; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=None`,
+    `RefreshToken=RefreshToken; Max-Age=86400; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=None`,
 ];
 export const cookieDataEmpty = [
-    `AccessToken=; Max-Age=0; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-    `IdToken=; Max-Age=0; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-    `RefreshToken=; Max-Age=0; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+    `AccessToken=; Max-Age=0; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=None`,
+    `IdToken=; Max-Age=0; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=None`,
+    `RefreshToken=; Max-Age=0; Domain=${tokenDomain}; Path=/; HttpOnly; Secure; SameSite=None`,
 ];
