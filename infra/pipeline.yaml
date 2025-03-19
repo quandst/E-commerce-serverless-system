@@ -1,0 +1,153 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing dependencies...
+      - npm install
+      - npm install -g typescript
+
+  pre_build:
+    commands:
+      - echo Running unit tests...
+      - npm run build
+      - npm run test
+
+  build:
+    commands:
+      - echo Packaging CloudFormation templates...
+      - aws cloudformation package --template-file template.yaml --s3-bucket $S3_BUCKET --output-template-file packaged.yaml
+
+artifacts:
+  files:
+    - packaged.yaml
+
+---
+
+Resources:
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: EcommerceServerlessPipeline
+      RoleArn: !ImportValue PipelineRoleArn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactBucket
+
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: GitHubSource
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: 1
+              Configuration:
+                Owner: quandst
+                Repo: E-commerce-serverless-system
+                Branch: dev
+                OAuthToken: !Sub "{{resolve:secretsmanager:github-token}}"
+              OutputArtifacts:
+                - Name: SourceOutput
+
+        - Name: Test
+          Actions:
+            - Name: UnitTests
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutput
+              Configuration:
+                ProjectName: EcommerceTest
+                EnvironmentVariables:
+                  - Name: NODE_ENV
+                    Value: test
+                    Type: PLAINTEXT
+                ServiceRole: !ImportValue PipelineRoleArn
+
+        - Name: DeployTest
+          Actions:
+            - Name: DeployTestStack
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              InputArtifacts:
+                - Name: BuildOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: EcommerceTestStack
+                TemplatePath: BuildOutput::packaged.yaml
+
+        - Name: IntegrationTest
+          Actions:
+            - Name: RunIntegrationTests
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              InputArtifacts:
+                - Name: SourceOutput
+              Configuration:
+                ProjectName: EcommerceIntegrationTest
+                ServiceRole: !ImportValue PipelineRoleArn
+
+        - Name: DeployStaging
+          Actions:
+            - Name: DeployStagingStack
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              InputArtifacts:
+                - Name: BuildOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: EcommerceStagingStack
+                TemplatePath: BuildOutput::packaged.yaml
+
+        - Name: EndToEndTest
+          Actions:
+            - Name: RunEndToEndTests
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              InputArtifacts:
+                - Name: SourceOutput
+              Configuration:
+                ProjectName: EcommerceE2ETest
+                ServiceRole: !ImportValue PipelineRoleArn
+
+        - Name: DeployProd
+          Actions:
+            - Name: DeployProdStack
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              InputArtifacts:
+                - Name: BuildOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: EcommerceProdStack
+                TemplatePath: BuildOutput::packaged.yaml
+
+Outputs:
+  PipelineArn:
+    Value: !Ref Pipeline
+    Export:
+      Name: EcommercePipelineArn

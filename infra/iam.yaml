@@ -1,0 +1,66 @@
+# infra/iam.yaml
+Resources:
+  PipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: EcommercePipelineRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+                - codebuild.amazonaws.com
+                - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: SecretsManagerAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !ImportValue GitHubTokenArn
+
+        - PolicyName: CodePipelineAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codepipeline:StartPipelineExecution
+                  - codepipeline:GetPipelineState
+                  - codepipeline:GetPipelineExecution
+                  - codepipeline:ListPipelineExecutions
+                Resource: "*"
+
+        - PolicyName: CodeBuildAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                  - codebuild:ListBuilds
+                Resource: "*"
+
+        - PolicyName: CloudFormationAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DeleteStack
+                Resource: "*"
+
+Outputs:
+  PipelineRoleArn:
+    Value: !GetAtt PipelineRole.Arn
+    Export:
+      Name: PipelineRoleArn
