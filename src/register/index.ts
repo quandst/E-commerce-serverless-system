@@ -158,7 +158,8 @@ import {
     CognitoIdentityProvider,
     SignUpCommandInput,
 } from '@aws-sdk/client-cognito-identity-provider';
-// import { SES, SendEmailCommand } from '@aws-sdk/client-ses';
+// import { SES } from '@aws-sdk/client-ses';
+import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { validate } from 'email-validator';
 import { lambdaResponse, tokensToCookies, userProperties } from '../../lib/utils';
 import { poolData } from '../config';
@@ -166,6 +167,12 @@ import { poolData } from '../config';
 // Initialize SES and Cognito clients
 // const ses = new SES({ region: poolData.region });
 const cognitoProvider = new CognitoIdentityProvider({ region: poolData.region });
+
+// Initialize SQS client
+const sqsClient = new SQSClient({ region: poolData.region });
+
+// URL của hàng đợi SQS
+const sqsQueueUrl = 'https://sqs.us-east-1.amazonaws.com/566326047989/SendEmail';
 
 export async function register(
     event: APIGatewayProxyEventV2,
@@ -201,7 +208,7 @@ export async function register(
         const cookies = tokensToCookies(tokens);
 
         // Send confirmation email
-        // await sendConfirmationEmail(email, username);
+        await sendConfirmationEmail(email, username);
 
         return {
             ...lambdaResponse(
@@ -290,24 +297,24 @@ async function authenticateUser(username: string, password: string) {
 }
 
 // Helper function to send confirmation email
-// async function sendConfirmationEmail(email: string, username: string) {
-//     const sendEmailParams = {
-//         Destination: { ToAddresses: [email] },
-//         Message: {
-//             Body: {
-//                 Text: {
-//                     Data: `Xin chào ${username},\n\nBạn đã đăng ký thành công tài khoản của mình.`,
-//                 },
-//             },
-//             Subject: { Data: 'Đăng ký tài khoản thành công' },
-//         },
-//         Source: 'naquan1309@gmail.com',
-//     };
+async function sendConfirmationEmail(email: string, username: string) {
+    const messageBody = JSON.stringify({
+        to: email,
+        subject: 'Đăng ký tài khoản thành công',
+        body: `Xin chào ${username},\n\nBạn đã đăng ký thành công tài khoản của mình.`,
+        from: 'naquan1309@gmail.com', // Thay thế bằng địa chỉ email đã được xác minh của bạn
+    });
 
-//     try {
-//         await ses.send(new SendEmailCommand(sendEmailParams));
-//     } catch (sesError) {
-//         console.error('Error sending email:', sesError);
-//         throw sesError;
-//     }
-// }
+    const params = {
+        QueueUrl: sqsQueueUrl,
+        MessageBody: messageBody,
+    };
+
+    try {
+        const data = await sqsClient.send(new SendMessageCommand(params));
+        console.log('Đã gửi yêu cầu email vào SQS:', data);
+    } catch (err) {
+        console.error('Lỗi khi gửi tin nhắn vào SQS:', err);
+        throw err;
+    }
+}

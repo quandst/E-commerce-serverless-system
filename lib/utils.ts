@@ -451,4 +451,68 @@ export const supportedCountries: Country[] = [
         unicode: 'U+1F1FB U+1F1F3',
         image: 'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VN.svg'
     },
+    {
+        code: 'GB',
+        name: 'United Kingdom',
+        emoji: '🇬🇧',
+        unicode: 'U+1F1EC U+1F1E7',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg',
+    },
+    {
+        code: 'IN',
+        name: 'India',
+        emoji: '🇮🇳',
+        unicode: 'U+1F1EE U+1F1F3',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IN.svg',
+    },
+    {
+        code: 'FR',
+        name: 'France',
+        emoji: '🇫🇷',
+        unicode: 'U+1F1EB U+1F1F7',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FR.svg',
+    },
+    {
+        code: 'IT',
+        name: 'Italy',
+        emoji: '🇮🇹',
+        unicode: 'U+1F1EE U+1F1F9',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg',
+    },
+    {
+        code: 'NG',
+        name: 'Nigeria',
+        emoji: '🇳🇬',
+        unicode: 'U+1F1F3 U+1F1EC',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NG.svg',
+    },
+    {
+        code: 'EG',
+        name: 'Egypt',
+        emoji: '🇪🇬',
+        unicode: 'U+1F1EA U+1F1EC',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EG.svg',
+    },
+    {
+        code: 'ZA',
+        name: 'South Africa',
+        emoji: '🇿🇦',
+        unicode: 'U+1F1FF U+1F1E6',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ZA.svg',
+    },
+    {
+        code: 'GH',
+        name: 'Ghana',
+        emoji: '🇬🇭',
+        unicode: 'U+1F1EC U+1F1ED',
+        image:
+            'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GH.svg',
+    },
 ];

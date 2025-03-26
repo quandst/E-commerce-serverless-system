@@ -59,7 +59,7 @@ export class Database extends Construct {
         // Scale down in the afternoon
         writeAutoScaling.scaleOnSchedule('scale-down', {
             schedule: Schedule.cron({ hour: '14', minute: '0' }),
-            maxCapacity: 2,
+            maxCapacity: 5,
         });
     }
 

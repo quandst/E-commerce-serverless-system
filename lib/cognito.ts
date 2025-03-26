@@ -108,7 +108,7 @@ export class Cognito extends Construct {
       minLength: PASSWORD_MIN_LENGTH,
       requireLowercase: true,
       requireDigits: true,
-      requireUppercase: true,
+      requireUppercase: false,
       requireSymbols: true,
     };
   }

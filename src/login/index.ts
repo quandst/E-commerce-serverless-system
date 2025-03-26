@@ -106,9 +106,15 @@ export async function login(
             fetchUserGroups(username),
         ]);
 
-        // Return success response
+        // Include tokens in the response body
+        const responseBody = {
+            ...userProperties(groups.Groups, user),
+            tokens, // Add the tokens object here
+        };
+
+        // Return success response with tokens in the body and cookies
         return {
-            ...lambdaResponse(userProperties(groups.Groups, user), 200),
+            ...lambdaResponse(responseBody, 200),
             cookies,
         };
     } catch (error) {

@@ -195,7 +195,7 @@ export class Microservice extends Construct {
                 'products',
                 'products',
                 '/products',
-                [HttpMethod.POST],
+                [HttpMethod.GET],
                 amazonDynamoDBFullAccess,
             ),
         );
@@ -224,7 +224,7 @@ export class Microservice extends Construct {
                 'order',
                 'order',
                 '/order',
-                [HttpMethod.POST],
+                [HttpMethod.GET],
                 amazonDynamoDBFullAccess,
                 authorizer,
             ),

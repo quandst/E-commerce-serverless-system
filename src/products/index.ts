@@ -117,9 +117,9 @@ export async function products(
                 limit,
                 sort,
                 startKey,
-            ); // POST product?category=Phone
+            );
         }
-        return await getAllProducts(ddbClient, search, limit, startKey); // POST product
+        return await getAllProducts(ddbClient, search, limit, startKey);
     } catch (error) {
         return lambdaResponse(error, 500);
     }
