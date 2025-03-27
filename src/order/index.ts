@@ -17,7 +17,6 @@ import {
     PaymentStatus,
     queryItems,
 } from '../../lib/utils';
-import { poolData } from '../config';
 
 // 👇 get orders
 const getOrders = async (
@@ -97,7 +96,7 @@ export async function order(
         */
         const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
         const user = claims.authorizer.lambda.accessPayload.username!;
-        const ddbClient = new DynamoDBClient({ region: poolData.region });
+        const ddbClient = new DynamoDBClient({ region: process.env.region });
 
         const requestBody = JSON.parse(event.body || '{}');
         const params = event.queryStringParameters;
@@ -115,7 +114,7 @@ export async function order(
 
         // 👇 check if query should be filtered by category
         const category = params?.category;
-        return await getOrders(ddbClient, user, startKey, limit, category);
+        return await getOrders(ddbClient, user, startKey, limit, category); // POST /order
     } catch (error) {
         return lambdaResponse(error, 500);
     }

@@ -23,7 +23,6 @@ import {
     validIntNumber,
     KeyValue,
 } from '../../../lib/utils';
-import { poolData } from '../../config';
 
 const { orderTable, cartIntent, cartStatus, orderLogs } = constants;
 
@@ -142,7 +141,8 @@ const getOrderByIntent = async (
                     item => item.productId === productId,
                 );
                 if (index >= 0) {
-                    cartOrder.orders[index].count = count;
+                    const currentCount = cartOrder.orders[index].count;
+                    cartOrder.orders[index].count = Math.max(currentCount, count);
                 } else {
                     cartOrder.orders.push({
                         slot: imageToSlot(product),
@@ -195,19 +195,17 @@ export async function orderIntent(
     try {
         const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
         const user = claims.authorizer.lambda.accessPayload.username!;
-        const ddbClient = new DynamoDBClient({ region: poolData.region });
+        const ddbClient = new DynamoDBClient({ region: process.env.region });
 
         // 👇 check if intent is valid
-        const intent = event.pathParameters?.cart;
-        // console.log('intent', intent);
+        const intent = event.pathParameters?.intent;
         if (!intent) {
             return lambdaResponse({ name: `No Intent Specified` }, 400);
         }
 
         const requestBody: Orders[] = JSON.parse(event.body || '[]');
-        return getOrderByIntent(ddbClient, user, intent, requestBody);
+        return getOrderByIntent(ddbClient, user, intent, requestBody); // POST /order/{intent}
     } catch (error) {
         return lambdaResponse(error, 500);
     }
 }
-

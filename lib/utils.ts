@@ -400,7 +400,7 @@ export const constants = {
     productTable: 'productTable',
     cartIntent: 'cart',
     cartStatus: 'IN CART',
-    orderLogs: '-',
+    orderLogs: '',
     categoryIndex: 'category-index',
     groups: {
         admin: 'admin_group',

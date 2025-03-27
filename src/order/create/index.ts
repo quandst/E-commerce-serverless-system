@@ -22,8 +22,6 @@ import {
     OrderTableKeys,
     KeyValue,
 } from '../../../lib/utils';
-import { poolData } from '../../config';
-
 
 // 👇 create order
 const createOrder = async (
@@ -116,9 +114,9 @@ export async function orderCreate(
         const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
         const user = claims.authorizer.lambda.accessPayload.username!;
         const requestBody: Orders[] = JSON.parse(event.body || '[]');
-        const ddbClient = new DynamoDBClient({ region: poolData.region });
+        const ddbClient = new DynamoDBClient({ region: process.env.region });
 
-        return await createOrder(ddbClient, requestBody, user);
+        return await createOrder(ddbClient, requestBody, user); // POST /order/create
     } catch (error) {
         return lambdaResponse(error, 500);
     }

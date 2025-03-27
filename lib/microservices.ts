@@ -224,7 +224,7 @@ export class Microservice extends Construct {
                 'order',
                 'order',
                 '/order',
-                [HttpMethod.GET],
+                [HttpMethod.POST],
                 amazonDynamoDBFullAccess,
                 authorizer,
             ),
@@ -232,8 +232,8 @@ export class Microservice extends Construct {
         httpApi.addRoutes(
             createRoute(
                 'orderIntent',
-                'order/cart',
-                '/order/{cart}',
+                'order/intent',
+                '/order/{intent}',
                 [HttpMethod.POST],
                 amazonDynamoDBFullAccess,
                 authorizer,
