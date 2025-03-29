@@ -80,15 +80,11 @@ export async function paymentCheckout(
         const createIntent = await stripe.paymentIntents.create({
             amount,
             currency: 'usd',
-            description: `Order For ${strLower(
-                user,
-            )}, Amount: US$${amount}, Date Initiated: ${date}`,
-            metadata: {
-                user,
-            },
-            automatic_payment_methods: {
-                enabled: true,
-            },
+            description: `Order For ${strLower(user)}, Amount: US$${amount}, Date Initiated: ${date}`,
+            metadata: { user },
+            payment_method: 'pm_card_visa', // Test Visa payment method
+            payment_method_types: ['card'],
+            confirm: true,
         });
 
         return lambdaResponse(

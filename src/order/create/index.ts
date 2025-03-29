@@ -22,6 +22,7 @@ import {
     OrderTableKeys,
     KeyValue,
 } from '../../../lib/utils';
+import { poolData } from '../../config';
 
 // 👇 create order
 const createOrder = async (
@@ -75,10 +76,10 @@ const createOrder = async (
     createUpdate.amount =
         Math.round((createUpdate.amount! + Number.EPSILON) * 100) / 100;
 
-    /*
-      if (createUpdate.orders!.length === 0)
-      return lambdaResponse({name: 'NoOrderAfterProcessingException'}, 400);
-    */
+
+    if (createUpdate.orders!.length === 0)
+        return lambdaResponse({ name: 'NoOrderAfterProcessingException' }, 400);
+
     const { Item } = await ddbClient.send(
         new GetItemCommand({
             TableName: orderTable,
@@ -114,7 +115,7 @@ export async function orderCreate(
         const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
         const user = claims.authorizer.lambda.accessPayload.username!;
         const requestBody: Orders[] = JSON.parse(event.body || '[]');
-        const ddbClient = new DynamoDBClient({ region: process.env.region });
+        const ddbClient = new DynamoDBClient({ region: poolData.region });
 
         return await createOrder(ddbClient, requestBody, user); // POST /order/create
     } catch (error) {
