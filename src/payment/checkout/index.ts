@@ -86,6 +86,9 @@ export async function paymentCheckout(
             metadata: {
                 user,
             },
+            automatic_payment_methods: {
+                enabled: true,
+            },
         });
 
         return lambdaResponse(

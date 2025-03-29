@@ -87,13 +87,6 @@ export async function order(
     event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResult> {
     try {
-        /*
-        const claims = event.requestContext.authorizer?.jwt.claims;
-        if (!claims || claims["token_use"] !== "id") {
-            return lambdaResponse({ name: "IdTokenRequiredException" }, 400);
-        }
-        const user = claims["cognito:username"] as string;
-        */
         const claims = event.requestContext as unknown as { authorizer: LambdaRequestContext };
         const user = claims.authorizer.lambda.accessPayload.username!;
         const ddbClient = new DynamoDBClient({ region: process.env.region });

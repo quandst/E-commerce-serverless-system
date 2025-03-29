@@ -250,19 +250,14 @@ export async function paymentHook(event: APIGatewayProxyEventV2 | any): Promise<
             if (!sig || !event.body) {
                 return lambdaResponse({ message: 'Invalid request' }, 400);
             }
-            // console.log(sig);
-            // console.log(event.body);
-            // const rawBody = event.body.toString();
-            // console.log(rawBody);
             const payload = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString() : event.body;
-            // console.log('payload:', payload);
             const ev = stripe.webhooks.constructEvent(payload, sig, config.webhook_signing_secret);
             const session = ev.data.object as unknown as Session;
 
             const params = {
                 Entries: [
                     {
-                        Source: 'stripe.payment',
+                        Source: 'aws.partner/stripe.com',
                         DetailType: ev.type,
                         Detail: JSON.stringify({ session }),
                     },
